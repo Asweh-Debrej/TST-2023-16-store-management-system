@@ -56,22 +56,29 @@ class Checkout extends BaseController
 
     public function saveOrder()
     {
+        // Define validation rules
+        $validationRules = [
+            'name' => 'required|min_length[3]|max_length[255]',
+            'address' => 'required|min_length[5]|max_length[255]',
+            'phone' => 'required|min_length[10]|max_length[15]',
+            'subtotal' => 'required|numeric',
+            'shippingcost' => 'required|numeric',
+            'totalPrice' => 'required|numeric',
+        ];
 
-        // echo "Hello, World!";
-        // // Define validation rules
-        // $validationRules = [
-        //     'name' => 'required|min_length[3]|max_length[255]',
-        //     'address' => 'required|min_length[5]|max_length[255]',
-        //     'phone' => 'required|min_length[10]|max_length[15]',
-        //     'productTable' => 'required|array|min_length[1]',
-        //     // Add other validation rules as needed
-        // ];
+        // Run validation
+        if (!$this->validate($validationRules)) {
+            // If validation fails, redirect back with errors
+            return redirect()->to('/checkout');
+        }
 
-        // // Run validation
-        // if (!$this->validate($validationRules)) {
-        //     // If validation fails, redirect back with errors
-        //     return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
-        // }
+        // Check if there is at least one product ordered
+        // Assuming that the productTable is an array and should have at least one element
+        $productTableData = $this->request->getPost('productTable');
+        if (empty($productTableData)) {
+            return redirect()->to('/checkout')->withInput();
+        }
+
 
         // Retrieve data from the form
         $userId = 1;

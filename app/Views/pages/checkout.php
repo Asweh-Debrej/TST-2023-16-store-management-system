@@ -80,6 +80,9 @@
                             </table>
                             <!-- ... existing form fields ... -->
                             <button type="submit" class="btn btn-primary btn-block" id="placeOrderBtn">Place Order</button>
+                            <input type="hidden" name="subtotal" id="hiddenSubtotal" value="35.00">
+                            <input type="hidden" name="shippingcost" id="hiddenShippingCost" value="5000">
+                            <input type="hidden" name="totalPrice" id="hiddenTotalPrice" value="40.00">
                             </form>
                         </div>
                     </div>
@@ -133,6 +136,10 @@
                 });
                 const shippingprice = parseFloat(shippingcost.innerText.replace('Rp. ', ''));
                 total = subtotal + shippingprice
+                // Update hidden input fields
+                document.getElementById('hiddenSubtotal').value = subtotal.toFixed(2);
+                document.getElementById('hiddenTotalPrice').value = total.toFixed(2);
+
                 // Display the updated subtotal
                 document.getElementById('subtotal').innerText = 'Rp. ' + subtotal.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
                 document.getElementById('totalPrice').innerText = 'Rp. ' + total.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
