@@ -6,8 +6,8 @@ use App\Models\DrinkModel;
 
 class Drink extends BaseController
 {
-
   protected $drinkModel;
+
   public function __construct()
   {
     $this->drinkModel = new DrinkModel();
@@ -15,52 +15,65 @@ class Drink extends BaseController
 
   public function index()
   {
+    // Panggil fungsi inisialisasi checkout session
+    $this->initCheckoutSession();
+
     $drink = $this->drinkModel->findAll();
+
+    // Dapatkan status add to checkout dari sesi
+    $addedToCheckout = session()->get('added_to_checkout', []);
 
     $data = [
       'title' => 'Orders | Drinks Store',
-      'drink' => $drink
+      'drink' => $drink,
+      'addedToCheckout' => $addedToCheckout,
     ];
-
 
     return view('drink/index', $data);
   }
-  public function addToCart()
-    {
-        // Ambil ID produk dari data POST
-        $productId = $this->request->getPost('id');
 
-        // Lakukan logika penambahan ke keranjang, misalnya simpan dalam sesi atau database
-        // Di sini, kita akan menyimpan dalam sesi sebagai contoh
-        $cart = session('cart') ?: [];
+  protected function initCheckoutSession()
+  {
+    $session = session();
 
-        // Periksa apakah produk sudah ada di keranjang
-        if (array_key_exists($productId, $cart)) {
-            // Jika sudah ada, tambahkan jumlahnya
-            $cart[$productId]++;
-        } else {
-            // Jika belum, tambahkan produk ke keranjang dengan jumlah 1
-            $cart[$productId] = 1;
-        }
+    // Inisialisasi atau reset sesi checkout
+    $session->set('cart', []);
 
-        // Simpan kembali keranjang ke dalam sesi
-        session()->set('cart', $cart);
+    // Bisa juga tambahkan langkah-langkah inisialisasi lainnya jika diperlukan
 
-        // Kirim respons ke klien
-        return $this->response->setJSON(['status' => 'success', 'message' => 'Product added to cart', 'productId' => $productId]);
+    return true; // Untuk memberi tahu bahwa inisialisasi berhasil
+  }
+
+  public function addToCheckout()
+  {
+    $productId = $this->request->getPost('id');
+    $session = session();
+
+    // Get the existing cart or create an empty array
+    $cart = $session->get('cart', []);
+
+    // Add the new product to the cart
+    $cart[] = $productId;
+
+    // Save the updated cart to the session
+    $session->set('cart', $cart);
+
+    // Set the status of the added item to checkout in the session
+    $addedToCheckout = $session->get('added_to_checkout', []);
+
+    // Ensure $addedToCheckout is an array
+    if (!is_array($addedToCheckout)) {
+      $addedToCheckout = [];
     }
 
-    public function checkout()
-    {
-        // Ambil data keranjang dari sesi
-        $cart = session('cart') ?: [];
+    $addedToCheckout[$productId] = true;
+    $session->set('added_to_checkout', $addedToCheckout);
 
-        $data = [
-            'title' => 'Checkout | Drinks Store',
-            'cartItems' => $cart
-        ];
-
-        return view('drink/checkout', $data);
-    }
-
+    return $this->response->setJSON([
+      'status' => 'success',
+      'message' => 'Product added to checkout',
+      'productId' => $productId,
+      'cart' => $cart,
+    ]);
+  }
 }

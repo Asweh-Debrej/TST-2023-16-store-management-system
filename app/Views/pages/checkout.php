@@ -109,8 +109,29 @@
 
       // Function to update subtotal based on quantity
       function updateSubtotal() {
-        calcprice()
+        calcprice();
+        updateQuantity(productId, quantity);
+
       }
+
+      function updateQuantity(productId, quantity) {
+  $.ajax({
+    type: 'POST',
+    url: '/checkout/updateQuantity', // Adjust URL based on your routing
+    data: {
+      productId: productId,
+      quantity: quantity,
+    },
+    success: function(response) {
+      // Handle success, if needed
+      console.log(response);
+    },
+    error: function() {
+      // Handle error, if needed
+      console.log('Error updating quantity.');
+    },
+  });
+}
 
       function calcprice() {
         let subtotal = 0;
