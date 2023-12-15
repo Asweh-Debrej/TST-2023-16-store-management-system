@@ -19,13 +19,15 @@
             </thead>
             <tbody>
               <?php foreach ($order as $o) : ?>
-                <tr>
-                  <td><?= $o['id']; ?></td>
-                  <td><?= $o['updated_at']; ?></td>
-                  <td><?= $o['address']; ?></td>
-                  <td>Rp.<?= $o['total_price']; ?></td>
-                  <td><?= $o['status']; ?></span> </td>
-                </tr>
+                <?php if ($o['userid'] == session()->get('user_id')) : ?>
+                  <tr>
+                    <td><?= $o['id']; ?></td>
+                    <td><?= $o['updated_at']; ?></td>
+                    <td><?= $o['address']; ?></td>
+                    <td>Rp.<?= $o['total_price']; ?></td>
+                    <td><?= $o['status']; ?></span> </td>
+                  </tr>
+                <?php endif; ?>
               <?php endforeach; ?>
             </tbody>
           </table>

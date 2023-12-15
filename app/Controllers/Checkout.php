@@ -22,6 +22,7 @@ class Checkout extends BaseController
 
     public function index()
     {
+        
         $checkout = [];
         $checkoutData = $this->checkoutModel->find(1, 'userid');
 
@@ -66,10 +67,13 @@ class Checkout extends BaseController
             'totalPrice' => 'required|numeric',
         ];
 
+
+
         // Run validation
         if (!$this->validate($validationRules)) {
             // If validation fails, redirect back with errors
-            return redirect()->to('/checkout');
+            $validation = \Config\Services::validation();
+            return redirect()->to('/checkout')->withInput()->with('validation', $validation);
         }
 
         // Check if there is at least one product ordered
