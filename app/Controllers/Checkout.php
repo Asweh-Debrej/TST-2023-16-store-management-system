@@ -4,16 +4,20 @@ namespace App\Controllers;
 
 use App\Models\CheckoutModel;
 use App\Models\DrinkModel;
+use App\Models\OrderModel;
 use stdClass;
 
 class Checkout extends BaseController
 {
     protected $drinkModel;
     protected $checkoutModel;
+    protected $orderModel;
+
     public function __construct()
     {
         $this->checkoutModel = new CheckoutModel();
         $this->drinkModel = new DrinkModel();
+        $this->orderModel = new OrderModel();
     }
 
     public function index()
@@ -52,6 +56,8 @@ class Checkout extends BaseController
 
     public function saveOrder()
     {
+
+        echo "Hello, World!";
         // Define validation rules
         $validationRules = [
             'name' => 'required|min_length[3]|max_length[255]',
@@ -75,15 +81,15 @@ class Checkout extends BaseController
         $subtotal = $this->request->getPost('subtotal');
         $shippingCost = $this->request->getPost('shippingcost');
         $totalPrice = $this->request->getPost('totalPrice');
-        $productTableData = $this->request->getPost('productTable');
+        // $productTableData = $this->request->getPost('productTable');
 
         // Save order information
-        $orderId = $this->checkoutModel->saveOrder($userId, $name, $address, $phone, $subtotal, $shippingCost, $totalPrice);
+        // $orderId = $this->orderModel->saveOrder($userId, $name, $address, $phone, $subtotal, $shippingCost, $totalPrice);
 
         // Save order items
-        foreach ($productTableData as $product) {
-            $this->checkoutModel->saveOrderItem($orderId, $product['product_id'], $product['quantity'], $product['price']);
-        }
+        // foreach ($productTableData as $product) {
+        //     $this->orderModel->saveOrderItem($orderId, $product['product_id'], $product['quantity'], $product['price']);
+        // }
 
         // Optionally, you might want to redirect the user to a thank you page
         return redirect()->to('/thankyou');

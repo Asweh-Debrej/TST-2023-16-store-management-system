@@ -15,21 +15,33 @@ class Orders extends Migration
                 'unsigned' => true,
                 'auto_increment' => true,
             ],
-            'order_id' => [
-                'type' => 'VARCHAR',
-                'constraint' => 255,
+            'user_id' => [
+                'type' => 'INT',
+                'constraint' => 5,
+                'unsigned' => true,
             ],
-            'customer_name' => [
+            'name' => [
                 'type' => 'VARCHAR',
-                'constraint' => 100,
+                'constraint' => '255',
             ],
-            'total_amount' => [
+            'address' => [
+                'type' => 'TEXT',
+            ],
+            'phone' => [
+                'type' => 'VARCHAR',
+                'constraint' => '15',
+            ],
+            'subtotal' => [
                 'type' => 'DECIMAL',
                 'constraint' => '10,2',
             ],
-            'status' => [
-                'type' => 'VARCHAR',
-                'constraint' => 50,
+            'shipping_cost' => [
+                'type' => 'DECIMAL',
+                'constraint' => '10,2',
+            ],
+            'total_price' => [
+                'type' => 'DECIMAL',
+                'constraint' => '10,2',
             ],
             'created_at' => [
                 'type' => 'DATETIME',
@@ -39,6 +51,10 @@ class Orders extends Migration
                 'type' => 'DATETIME',
                 'null' => true,
             ],
+            'status' => [
+                'type' => 'VARCHAR',
+                'constraint' => 50,
+            ]
         ]);
 
         $this->forge->addKey('id', true);

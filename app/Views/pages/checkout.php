@@ -18,21 +18,22 @@
                         <div class="card-header font-weight-bold">
                             Contact and Delivery Information
                         </div>
-                        <div class="card-body">
-                            <div class="form-group">
-                                <label for="name">Full Name</label>
-                                <input type="text" class="form-control" id="name" name="name" placeholder="Enter your full name" required autofocus>
+
+                        <form action="/checkout/saveOrder" method="POST">
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label for="name">Full Name</label>
+                                    <input type="text" class="form-control" id="name" name="name" placeholder="Enter your full name" required autofocus>
+                                </div>
+                                <div class="form-group">
+                                    <label for="address">Address</label>
+                                    <input type="text" class="form-control" id="address" name="address" placeholder="Enter your address" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="phone">Phone Number</label>
+                                    <input type="tel" class="form-control" id="phone" name="phone" placeholder="Enter your phone number" required>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label for="address">Address</label>
-                                <input type="text" class="form-control" id="address" name="address" placeholder="Enter your address" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="phone">Phone Number</label>
-                                <input type="tel" class="form-control" id="phone" name="phone" placeholder="Enter your phone number" required>
-                            </div>
-                            </form>
-                        </div>
                     </div>
                 </div>
 
@@ -77,9 +78,8 @@
                                     </tr>
                                 </tbody>
                             </table>
-                            <form action="/checkout/saveOrder" method="post">
-                                <!-- ... existing form fields ... -->
-                                <button type="submit" class="btn btn-primary btn-block">Place Order</button>
+                            <!-- ... existing form fields ... -->
+                            <button type="submit" class="btn btn-primary btn-block" id="placeOrderBtn">Place Order</button>
                             </form>
                         </div>
                     </div>
@@ -144,6 +144,25 @@
                 setTimeout(function() {
                     removeAlert.classList.add('d-none'); // Hide the alert after a short delay
                 }, 3000); // Adjust the delay (in milliseconds) as needed
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                const placeOrderBtn = document.getElementById('placeOrderBtn');
+
+                placeOrderBtn.addEventListener('click', function(e) {
+                    e.preventDefault(); // Prevent the default form submission
+
+                    // Call a function to handle the order placement
+                    placeOrder();
+                });
+            });
+
+            // Function to handle the order placement
+            function placeOrder() {
+                // ... any additional client-side validation or logic ...
+
+                // Submit the form programmatically
+                document.querySelector('form').submit();
             }
         </script>
 

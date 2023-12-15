@@ -8,43 +8,24 @@ use CodeIgniter\I18n\Time;
 class OrderSeeder extends Seeder
 {
     public function run()
-    {
-        $data = [
+    { // Seed data for the orders table
+        $ordersData = [
             [
-                'order_id'      => 'ORD001',
-                'customer_name' => 'Alice Johnson',
-                'total_amount'  => '150.75',
-                'status'        => 'Processing',
-                'created_at'    => Time::now(),
-                'updated_at'    => Time::now(),
+                'user_id' => 1,
+                'name' => 'John Doe',
+                'address' => '123 Main St',
+                'phone' => '555-1234',
+                'subtotal' => 50.00,
+                'shipping_cost' => 5.00,
+                'total_price' => 55.00,
+                'created_at' => Time::now(),
+                'updated_at' => Time::now(),
+                'status' => 'Delivered'
             ],
-            [
-                'order_id'      => 'ORD002',
-                'customer_name' => 'Bob Smith',
-                'total_amount'  => '200.50',
-                'status'        => 'Shipped',
-                'created_at'    => Time::now(),
-                'updated_at'    => Time::now(),
-            ],
-            [
-                'order_id'      => 'ORD003',
-                'customer_name' => 'Charlie Brown',
-                'total_amount'  => '75.25',
-                'status'        => 'Delivered',
-                'created_at'    => Time::now(),
-                'updated_at'    => Time::now(),
-            ],
-            [
-                'order_id'      => 'ORD004',
-                'customer_name' => 'David Miller',
-                'total_amount'  => '120.00',
-                'status'        => 'Completed',
-                'created_at'    => Time::now(),
-                'updated_at'    => Time::now(),
-            ],
+            // Add more sample orders as needed
         ];
 
-        // Using Query Builder
-        $this->db->table('orders')->insertBatch($data);
+        // Insert seed data into the orders table
+        $this->db->table('orders')->insertBatch($ordersData);
     }
 }

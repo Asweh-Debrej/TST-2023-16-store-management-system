@@ -11,22 +11,20 @@
             <thead>
               <tr>
                 <th scope="col">ID</th>
-                <th scope="col">Date Created</th>
+                <th scope="col">Last Updated</th>
+                <th scope="col">Address</th>
                 <th scope="col">Paid Amount</th>
                 <th scope="col">Status</th>
-                <th scope="col">Actions</th>
               </tr>
             </thead>
             <tbody>
               <?php foreach ($order as $o) : ?>
                 <tr>
-                  <td><?= $o['order_id']; ?></td>
-                  <td><?= $o['customer_name']; ?></td>
-                  <td>Rp.<?= $o['total_amount']; ?></td>
-                  <td><?= $o['status']; ?></td>
-                  <td>
-                    <a href="/order/detail/<?= $o['order_id']; ?>" class="btn btn-primary">Detail Order</a>
-                  </td>
+                  <td><?= $o['id']; ?></td>
+                  <td><?= $o['updated_at']; ?></td>
+                  <td><?= $o['address']; ?></td>
+                  <td>Rp.<?= $o['total_price']; ?></td>
+                  <td><?= $o['status']; ?></span> </td>
                 </tr>
               <?php endforeach; ?>
             </tbody>

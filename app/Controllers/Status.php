@@ -16,7 +16,7 @@ class Status extends BaseController
         $orders = $this->orderModel->findAll();
 
         $data = [
-            'title' => 'Orders | Drinks Store',
+            'title' => 'Your Orders',
             'order' => $orders
         ];
 
