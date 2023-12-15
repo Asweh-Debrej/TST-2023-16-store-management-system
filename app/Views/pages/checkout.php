@@ -78,7 +78,10 @@
                                     </tr>
                                 </tbody>
                             </table>
-                            <button type="submit" class="btn btn-primary btn-block">Place Order</button>
+                            <form action="/checkout/saveOrder" method="post">
+                                <!-- ... existing form fields ... -->
+                                <button type="submit" class="btn btn-primary btn-block">Place Order</button>
+                            </form>
                         </div>
                     </div>
                 </div>

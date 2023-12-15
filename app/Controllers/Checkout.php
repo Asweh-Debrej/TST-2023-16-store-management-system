@@ -53,7 +53,8 @@ class Checkout extends BaseController
         return view('pages/checkout', $data);
     }
 
-    public function createOrder()
+    public function saveOrder()
     {
+        
     }
 }

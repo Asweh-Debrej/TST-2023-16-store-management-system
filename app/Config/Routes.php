@@ -7,7 +7,7 @@ use CodeIgniter\Router\RouteCollection;
  */
 $routes->get('/', 'Drink::index');
 $routes->get('/checkout', 'Checkout::index');
-// // $routes->get('/orderlist', 'OrderList::index');
+$routes->get('/status', 'Status::index');
 
 
 // service('auth')->routes($routes);
