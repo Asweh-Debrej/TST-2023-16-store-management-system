@@ -84,7 +84,7 @@ class Checkout extends BaseController
         // $productTableData = $this->request->getPost('productTable');
 
         // Save order information
-        // $orderId = $this->orderModel->saveOrder($userId, $name, $address, $phone, $subtotal, $shippingCost, $totalPrice);
+        $orderId = $this->orderModel->saveOrder($userId, $name, $address, $phone, $subtotal, $shippingCost, $totalPrice);
 
         // Save order items
         // foreach ($productTableData as $product) {
