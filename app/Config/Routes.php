@@ -9,3 +9,6 @@ $routes->get('/', 'Drink::index');
 $routes->post('/cart/add', 'Drink::addToCart');
 $routes->get('/cart', 'Pages::index');
 
+$routes->get('/', 'Home::index');
+
+service('auth')->routes($routes);
