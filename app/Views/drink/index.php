@@ -5,11 +5,26 @@
   <div class="row">
     <div class="col">
 
-      <h1 class="mt-2">Recommendation Drinks</h1>
-      <ul>
-        <li class="fw-bold">Es Kopi Susu</li>
-        <li class="fw-bold">Es Matcha</li>
-      </ul>
+      <h1 class="mt-2">Featured Drinks</h1>
+      <div class="card-deck mb-4">
+        <!-- Recommendation 1: Es Kopi Susu -->
+        <div class="card">
+          <img src="/img/eskopisusu.png" class="card-img-top" alt="Es Kopi Susu" style="max-width: 200px;">
+          <div class="card-body">
+            <h5 class="card-title">Es Kopi Susu</h5>
+            <p class="card-text">Creamy and delicious coffee with milk.</p>
+          </div>
+        </div>
+
+        <!-- Recommendation 2: Es Matcha -->
+        <div class="card">
+          <img src="/img/esmatcha.png" class="card-img-top" alt="Es Matcha" style="max-width: 200px;">
+          <div class="card-body">
+            <h5 class="card-title">Es Matcha</h5>
+            <p class="card`-text">Refreshing green tea matcha served iced.</p>
+          </div>
+        </div>
+      </div>
 
       <h1 class="mt-2">List of Drinks</h1>
       <a href="/cart/checkout" class="btn btn-primary float-right">Checkout</a>
