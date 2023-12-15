@@ -6,9 +6,10 @@ use CodeIgniter\Router\RouteCollection;
  * @var RouteCollection $routes
  */
 $routes->get('/', 'Drink::index');
-$routes->post('/cart/add', 'Drink::addToCart');
-$routes->get('/cart', 'Pages::index');
+$routes->get('/status', 'Status::index');
+$routes->get('/checkout', 'Checkout::index');
+$routes->post('/checkout/saveOrder', 'Checkout::saveOrder');
 
-$routes->get('/', 'Home::index');
 
-service('auth')->routes($routes);
+
+// service('auth')->routes($routes);

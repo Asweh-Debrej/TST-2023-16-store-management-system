@@ -21,13 +21,13 @@
           <img src="/img/esmatcha.png" class="card-img-top" alt="Es Matcha" style="max-width: 200px;">
           <div class="card-body">
             <h5 class="card-title">Es Matcha</h5>
-            <p class="card`-text">Refreshing green tea matcha served iced.</p>
+            <p class="card-text">Refreshing green tea matcha served iced.</p>
           </div>
         </div>
       </div>
 
       <h1 class="mt-2">List of Drinks</h1>
-      <a href="/cart/checkout" class="btn btn-primary float-right">Checkout</a>
+      <a href="/checkout" class="btn btn-primary float-right" id="checkoutBtn">Checkout</a>
       <table class="table">
         <thead>
           <tr>
@@ -48,9 +48,9 @@
               <td>Rp.<?= $d['harga']; ?></td>
               <td>
                 <?php if (in_array($d['id'], session('cart') ?: [])) : ?>
-                  <span class="text-success">Added to Cart</span>
+                  <span class="text-success">Added to Checkout</span>
                 <?php else : ?>
-                  <a href="#" class="btn btn-primary add-to-cart" data-id="<?= $d['id']; ?>">Add to Cart</a>
+                  <a href="#" class="btn btn-primary add-to-cart" data-id="<?= $d['id']; ?>">Add to Checkout</a>
                 <?php endif; ?>
               </td>
             </tr>
@@ -65,26 +65,37 @@
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script>
   $(document).ready(function() {
+    // Function to handle add to cart
+    function addToCheckout(productId) {
+        $.ajax({
+            type: "POST",
+            url: "/checkout",
+            data: { id: productId },
+            success: function(response) {
+                alert('Product added to checkout! Product ID: ' + response.productId);
+                $("[data-id='" + productId + "']").replaceWith('<span class="text-success">Added to checkout</span>');
+            },
+            error: function() {
+                alert('Error adding product to checkout.');
+            }
+        });
+    }
+
+    // Click event for add to cart buttons
     $(".add-to-cart").click(function(e) {
-      e.preventDefault();
-
-      // Dapatkan ID produk dari atribut data
-      var productId = $(this).data('id');
-
-      // Kirim ID produk ke server atau simpan dalam sesi/cookie
-      // Contoh menggunakan AJAX untuk mengirim ke server
+        e.preventDefault();
+        var productId = $(this).data('id');
+        addToCart(productId);
+    });
+    // Checkout button click event
+    $("#checkoutBtn").click(function() {
+      // Reset the session data or perform any necessary actions after checkout
       $.ajax({
         type: "POST",
-        url: "/cart/add", // Ganti dengan URL yang sesuai
-        data: {
-          id: productId
-        },
-        success: function(response) {
-          // Handle respons jika diperlukan
-          alert('Product added to cart! Product ID: ' + response.productId);
-
-          // Ubah tombol menjadi "Added to Cart" setelah ditambahkan
-          $(".add-to-cart[data-id='" + productId + "']").replaceWith('<span class="text-success">Added to Cart</span>');
+        url: "/cart/reset", // Replace with the actual URL for resetting the session data
+        success: function() {
+          // Reload the page after successful checkout
+          location.reload();
         }
       });
     });
