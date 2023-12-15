@@ -8,7 +8,10 @@ class OrderModel extends Model
 {
     protected $table = 'orders';
     protected $useTimestamps = true;
-    
+    protected $allowedFields = [
+        'user_id', 'name', 'address', 'phone', 'subtotal', 'shipping_cost', 'total_price'
+    ];
+
     public function saveOrder($userId, $name, $address, $phone, $subtotal, $shippingCost, $totalPrice)
     {
         $data = [
@@ -18,7 +21,6 @@ class OrderModel extends Model
             'phone' => $phone,
             'subtotal' => $subtotal,
             'shipping_cost' => $shippingCost,
-            'total_price' => $totalPrice,
             'total_price' => $totalPrice,
         ];
 

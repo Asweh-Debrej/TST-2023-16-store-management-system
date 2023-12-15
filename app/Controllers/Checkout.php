@@ -57,24 +57,25 @@ class Checkout extends BaseController
     public function saveOrder()
     {
 
-        echo "Hello, World!";
-        // Define validation rules
-        $validationRules = [
-            'name' => 'required|min_length[3]|max_length[255]',
-            'address' => 'required|min_length[5]|max_length[255]',
-            'phone' => 'required|min_length[10]|max_length[15]',
-            'productTable' => 'required|array|min_length[1]',
-            // Add other validation rules as needed
-        ];
+        // echo "Hello, World!";
+        // // Define validation rules
+        // $validationRules = [
+        //     'name' => 'required|min_length[3]|max_length[255]',
+        //     'address' => 'required|min_length[5]|max_length[255]',
+        //     'phone' => 'required|min_length[10]|max_length[15]',
+        //     'productTable' => 'required|array|min_length[1]',
+        //     // Add other validation rules as needed
+        // ];
 
-        // Run validation
-        if (!$this->validate($validationRules)) {
-            // If validation fails, redirect back with errors
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
-        }
+        // // Run validation
+        // if (!$this->validate($validationRules)) {
+        //     // If validation fails, redirect back with errors
+        //     return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        // }
 
         // Retrieve data from the form
-        $userId = session()->get('user_id');
+        $userId = 1;
+        // $userId = session()->get('user_id');;
         $name = $this->request->getPost('name');
         $address = $this->request->getPost('address');
         $phone = $this->request->getPost('phone');
@@ -84,7 +85,7 @@ class Checkout extends BaseController
         // $productTableData = $this->request->getPost('productTable');
 
         // Save order information
-        $orderId = $this->orderModel->saveOrder($userId, $name, $address, $phone, $subtotal, $shippingCost, $totalPrice);
+        $this->orderModel->saveOrder($userId, $name, $address, $phone, $subtotal, $shippingCost, $totalPrice);
 
         // Save order items
         // foreach ($productTableData as $product) {
