@@ -19,7 +19,6 @@ class Checkout extends BaseController
     public function index()
     {
         $checkout = [];
-        //user id = 1, ini baru dummy doang ya rana
         $checkoutData = $this->checkoutModel->find(1, 'userid');
 
         if ($checkoutData) {
@@ -44,8 +43,6 @@ class Checkout extends BaseController
             echo "Checkout not found for user ID";
         }
 
-
-
         $data = [
             'title' => 'Checkout',
             'checkout' => $checkout
@@ -55,6 +52,40 @@ class Checkout extends BaseController
 
     public function saveOrder()
     {
-        
+        // Define validation rules
+        $validationRules = [
+            'name' => 'required|min_length[3]|max_length[255]',
+            'address' => 'required|min_length[5]|max_length[255]',
+            'phone' => 'required|min_length[10]|max_length[15]',
+            'productTable' => 'required|array|min_length[1]',
+            // Add other validation rules as needed
+        ];
+
+        // Run validation
+        if (!$this->validate($validationRules)) {
+            // If validation fails, redirect back with errors
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        // Retrieve data from the form
+        $userId = session()->get('user_id');
+        $name = $this->request->getPost('name');
+        $address = $this->request->getPost('address');
+        $phone = $this->request->getPost('phone');
+        $subtotal = $this->request->getPost('subtotal');
+        $shippingCost = $this->request->getPost('shippingcost');
+        $totalPrice = $this->request->getPost('totalPrice');
+        $productTableData = $this->request->getPost('productTable');
+
+        // Save order information
+        $orderId = $this->checkoutModel->saveOrder($userId, $name, $address, $phone, $subtotal, $shippingCost, $totalPrice);
+
+        // Save order items
+        foreach ($productTableData as $product) {
+            $this->checkoutModel->saveOrderItem($orderId, $product['product_id'], $product['quantity'], $product['price']);
+        }
+
+        // Optionally, you might want to redirect the user to a thank you page
+        return redirect()->to('/thankyou');
     }
 }
