@@ -9,7 +9,7 @@ $routes->get('/', 'Drink::index');
 $routes->get('/status', 'Status::index');
 $routes->get('/checkout', 'Checkout::index');
 $routes->post('/drink/addToCheckout', 'Drink::addToCheckout');
-$routes->post('/checkout/saveOrder', 'Checkout::saveOrder');
+$routes->post('/checkout/save', 'Checkout::saveOrder');
 
 
 
