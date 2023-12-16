@@ -19,6 +19,8 @@ class Status extends BaseController
             'title' => 'Your Orders',
             'order' => $orders
         ];
+
+
         return view('pages/status', $data);
     }
 }
