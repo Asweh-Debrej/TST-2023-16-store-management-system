@@ -11,7 +11,7 @@ class CheckoutSeeder extends Seeder
         $data = [
             [
                 'id' => 1,
-                'products' => json_encode(["1", "2", "3"]),
+                'products' => json_encode(["", "2", "3"]),
 
             ]
 
