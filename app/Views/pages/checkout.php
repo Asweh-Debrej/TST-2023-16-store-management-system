@@ -29,15 +29,15 @@
                             <div class="card-body">
                                 <div class="form-group">
                                     <label for="name">Full Name</label>
-                                    <input type="text" class="form-control" id="name" name="name" placeholder="Enter your full name" required autofocus>
+                                    <input type="text" class="form-control" id="name" name="name" placeholder="Enter your full name" required autofocus value=<?= old('name') ?>>
                                 </div>
                                 <div class="form-group">
                                     <label for="address">Address</label>
-                                    <input type="text" class="form-control" id="address" name="address" placeholder="Enter your address" required>
+                                    <input type="text" class="form-control" id="address" name="address" placeholder="Enter your address" required value=<?= old('address') ?>>
                                 </div>
                                 <div class="form-group">
                                     <label for="phone">Phone Number</label>
-                                    <input type="tel" class="form-control" id="phone" name="phone" placeholder="Enter your phone number" required>
+                                    <input type="tel" class="form-control" id="phone" name="phone" placeholder="Enter your phone number" required value=<?= old('phone') ?>>
                                 </div>
                             </div>
                     </div>
@@ -86,9 +86,9 @@
                             </table>
                             <!-- ... existing form fields ... -->
                             <button type="submit" class="btn btn-primary btn-block" id="placeOrderBtn">Place Order</button>
-                            <input type="hidden" name="subtotal" id="hiddenSubtotal" value="35.00">
-                            <input type="hidden" name="shippingcost" id="hiddenShippingCost" value="5000">
-                            <input type="hidden" name="totalPrice" id="hiddenTotalPrice" value="40.00">
+                            <input type="hidden" name="subtotal" id="hiddenSubtotal" value="35.00" disabled>
+                            <input type="hidden" name="shippingcost" id="hiddenShippingCost" value="5000" disabled>
+                            <input type="hidden" name="totalPrice" id="hiddenTotalPrice" value="40.00" disabled>
                             </form>
                         </div>
                     </div>
