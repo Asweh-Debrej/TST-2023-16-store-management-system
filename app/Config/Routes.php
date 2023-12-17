@@ -14,4 +14,4 @@ $routes->post('/drink/addToCheckout', 'Drink::addToCheckout', ['as' => 'addToChe
 
 
 
-// service('auth')->routes($routes);
+service('auth')->routes($routes);
