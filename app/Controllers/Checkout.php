@@ -26,7 +26,7 @@ class Checkout extends BaseController
         $session = session();
 
         // Get cart items from the session
-        $cart = $session->get('cart', []);
+        $cart = $session->get('cart') ?? [];
 
         // Iterate through the cart items
         foreach ($cart as $productId) {
