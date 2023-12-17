@@ -9,133 +9,149 @@ use stdClass;
 
 class Checkout extends BaseController
 {
-  protected $drinkModel;
-  protected $checkoutModel;
-  protected $orderModel;
+    protected $drinkModel;
+    protected $checkoutModel;
+    protected $orderModel;
 
-  public function __construct()
-  {
-    $this->checkoutModel = new CheckoutModel();
-    $this->drinkModel = new DrinkModel();
-    $this->orderModel = new OrderModel();
-  }
-
-  public function index()
-  {
-    $checkout = [];
-    $session = session();
-
-    // Get cart items from the session
-    $cart = $session->get('cart', []);
-
-    // Iterate through the cart items
-    foreach ($cart as $productId) {
-      $drinkData = $this->drinkModel->find($productId);
-
-      if ($drinkData) {
-        $product = new stdClass();
-        $product->productid = $productId;
-        $product->name = $drinkData['produk'];
-        $product->image = $drinkData['gambar'];
-        $product->price = $drinkData['harga'];
-
-        // Append the product to the array
-        $checkout[] = $product;
-        // You can perfo rm any other operations with each product here
-      }
+    public function __construct()
+    {
+        $this->checkoutModel = new CheckoutModel();
+        $this->drinkModel = new DrinkModel();
+        $this->orderModel = new OrderModel();
     }
 
-    $data = [
-      'title' => 'Checkout',
-      'checkout' => $checkout
-    ];
+    public function index()
+    {
+        $checkout = [];
+        $session = session();
 
-    return view('pages/checkout', $data);
-  }
+        // Get cart items from the session
+        $cart = $session->get('cart', []);
 
-  public function initCheckoutSession()
-  {
-    $session = session();
+        // Iterate through the cart items
+        foreach ($cart as $productId) {
+            $drinkData = $this->drinkModel->find($productId);
 
-    // Inisialisasi atau reset sesi checkout
-    $session->set('cart', []);
+            if ($drinkData) {
+                $product = new stdClass();
+                $product->productid = $productId;
+                $product->name = $drinkData['produk'];
+                $product->image = $drinkData['gambar'];
+                $product->price = $drinkData['harga'];
 
-    // Bisa juga tambahkan langkah-langkah inisialisasi lainnya jika diperlukan
+                // Append the product to the array
+                $checkout[] = $product;
+                // You can perfo rm any other operations with each product here
+            }
+        }
+        $validation = \Config\Services::validation();
+        $data = [
+            'title' => 'Checkout',
+            'validation' => $validation,
+            'checkout' => $checkout
+        ];
 
-    return true; // Untuk memberi tahu bahwa inisialisasi berhasil
-  }
-
-  public function updateQuantity()
-  {
-    $productId = $this->request->getPost('productId');
-    $quantity = $this->request->getPost('quantity');
-
-    // Retrieve the current cart from the session
-    $cart = session()->get('cart', []);
-
-    // Find the index of the product in the cart
-    $index = array_search($productId, $cart);
-
-    if ($index !== false) {
-      // Update the quantity of the product in the cart
-      // You may want to perform additional validation (e.g., check if the quantity is valid)
-      $cart[$index]['quantity'] = $quantity;
-
-      // Save the updated cart to the session
-      session()->set('cart', $cart);
-
-      return $this->response->setJSON(['status' => 'success', 'message' => 'Quantity updated']);
-    } else {
-      return $this->response->setJSON(['status' => 'error', 'message' => 'Product not found in the cart']);
-    }
-  }
-
-  public function saveOrder()
-  {
-    // Define validation rules
-    $validationRules = [
-      'name' => 'required|min_length[3]|max_length[255]',
-      'address' => 'required|min_length[5]|max_length[255]',
-      'phone' => 'required|min_length[10]|max_length[15]',
-      'subtotal' => 'required|numeric',
-      'shippingcost' => 'required|numeric',
-      'totalPrice' => 'required|numeric',
-    ];
-
-
-
-    // Run validation
-    if (!$this->validate($validationRules)) {
-      // If validation fails, redirect back with errors
-      $validation = \Config\Services::validation();
-      return redirect()->to('/checkout')->withInput()->with('validation', $validation);
+        return view('pages/checkout', $data);
     }
 
-    // Check if there is at least one product ordered
-    // Assuming that the productTable is an array and should have at least one element
-    $productTableData = $this->request->getPost('productTable');
-    if (empty($productTableData)) {
-      return redirect()->to('/checkout')->withInput();
+    public function initCheckoutSession()
+    {
+        $session = session();
+
+        // Inisialisasi atau reset sesi checkout
+        $session->set('cart', []);
+
+        // Bisa juga tambahkan langkah-langkah inisialisasi lainnya jika diperlukan
+
+        return true; // Untuk memberi tahu bahwa inisialisasi berhasil
     }
 
+    public function updateQuantity()
+    {
+        $productId = $this->request->getPost('productId');
+        $quantity = $this->request->getPost('quantity');
 
-    // Retrieve data from the form
-    $id = 1;
-    // $userId = session()->get('user_id');;
-    $name = $this->request->getPost('name');
-    $address = $this->request->getPost('address');
-    $phone = $this->request->getPost('phone');
-    $subtotal = $this->request->getPost('subtotal');
-    $shippingCost = $this->request->getPost('shippingcost');
-    $totalPrice = $this->request->getPost('totalPrice');
-    // $productTableData = $this->request->getPost('productTable');
+        // Retrieve the current cart from the session
+        $cart = session()->get('cart', []);
 
-    // Save order information
-    $this->orderModel->saveOrder($id, $name, $address, $phone, $subtotal, $shippingCost, $totalPrice);
+        // Find the index of the product in the cart
+        $index = array_search($productId, $cart);
 
-    // Save order items
-    // foreach ($productTableData as $product) {
-    //     $this->orderModel->saveOrderItem($orderId, $product['product_id'], $product['quantity'], $product['price']);
-    // }
-  }
+        if ($index !== false) {
+            // Update the quantity of the product in the cart
+            // You may want to perform additional validation (e.g., check if the quantity is valid)
+            $cart[$index]['quantity'] = $quantity;
+
+            // Save the updated cart to the session
+            session()->set('cart', $cart);
+
+            return $this->response->setJSON(['status' => 'success', 'message' => 'Quantity updated']);
+        } else {
+            return $this->response->setJSON(['status' => 'error', 'message' => 'Product not found in the cart']);
+        }
+    }
+
+    public function saveOrder()
+    {
+        // Define validation rules with custom error messages
+        $validationRules = [
+            'name' => 'required|min_length[3]|max_length[255]',
+            'address' => 'required|min_length[5]|max_length[255]',
+            'phone' => 'required|min_length[10]|max_length[15]',
+        ];
+
+        // Define custom error messages
+        $validationMessages = [
+            'name' => [
+                'required' => 'The name field is required.',
+                'min_length' => 'The name must be at least 3 characters.',
+                'max_length' => 'The name cannot exceed 255 characters.',
+            ],
+            'address' => [
+                'required' => 'The address field is required.',
+                'min_length' => 'The address must be at least 5 characters.',
+                'max_length' => 'The address cannot exceed 255 characters.',
+            ],
+            'phone' => [
+                'required' => 'The phone field is required.',
+                'min_length' => 'The phone must be at least 10 characters.',
+                'max_length' => 'The phone cannot exceed 15 characters.',
+            ],
+        ];
+
+        // Run validation with custom error messages
+        if (!$this->validate($validationRules, $validationMessages)) {
+            // If validation fails, return errors in the JSON response
+            return $this->response->setStatusCode(400)->setJSON([
+                'error' => $this->validator->getErrors(),
+            ]);
+        }
+
+        // Check if there is at least one product ordered
+        $productTableData = $this->request->getPost('productTable');
+        if (empty($productTableData)) {
+            return $this->response->setStatusCode(400)->setJSON([
+                'error' => 'At least one product is required for the order.',
+            ]);
+        }
+
+        // Retrieve data from the form
+        $id = 1;
+        $name = $this->request->getPost('name');
+        $address = $this->request->getPost('address');
+        $phone = $this->request->getPost('phone');
+        $subtotal = $this->request->getPost('subtotal');
+        $shippingCost = $this->request->getPost('shippingcost');
+        $totalPrice = $this->request->getPost('totalPrice');
+
+        // Save order information
+        $this->orderModel->saveOrder($id, $name, $address, $phone, $subtotal, $shippingCost, $totalPrice);
+
+        // Save order items
+        // foreach ($productTableData as $product) {
+        //     $this->orderModel->saveOrderItem($orderId, $product['product_id'], $product['quantity'], $product['price']);
+        // }
+
+        return $this->response->setJSON(['status' => 'success', 'message' => 'Order placed successfully!']);
+    }
 }

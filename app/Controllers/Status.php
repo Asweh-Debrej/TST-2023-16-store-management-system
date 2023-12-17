@@ -48,7 +48,7 @@ class Status extends BaseController
 
         $res = $this->orderModel->update($id, [
             'status' => $data['status'],
-            // 'estimated_arrival' => $data['estimated_arrival'],
+            'estimated_arrival' => $data['estimated_arrival'],
         ]);
 
         return $this->response->setJSON($res);
