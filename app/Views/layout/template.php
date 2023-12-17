@@ -21,11 +21,21 @@
   <div class="container mt-5 mb-4">
     <h1><strong><?= $title ?? '' ?></strong></h1>
     <!-- Alert for row removal -->
+    <?php if (session('successes')) : ?>
+      <div class="alert alert-success">
+        <ul>
+          <?php foreach (session('successes') as $message) : ?>
+            <li><?= esc($message) ?></li>
+          <?php endforeach ?>
+        </ul>
+      </div>
+    <?php endif ?>
+
     <?php if (session('errors')) : ?>
       <div class="alert alert-danger">
         <ul>
-          <?php foreach (session('errors') as $error) : ?>
-            <li><?= esc($error) ?></li>
+          <?php foreach (session('errors') as $message) : ?>
+            <li><?= esc($message) ?></li>
           <?php endforeach ?>
         </ul>
       </div>

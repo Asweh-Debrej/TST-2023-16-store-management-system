@@ -2,10 +2,8 @@
 
 <?= $this->section('content'); ?>
     <div class="row">
-
         <div class="container mt-3 mb-2">
             <div class="row">
-
                 <!-- Contact and Delivery Information Form -->
                 <div class="col-md-6">
                     <div class="card shadow-sm">
