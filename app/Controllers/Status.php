@@ -15,14 +15,6 @@ class Status extends BaseController
     {
         $orders = $this->orderModel->findAll();
 
-        // foreach ($orders as $order) {
-        //     // Fetch data from shibal function based on order id
-        //     $shibalData = $this->shibal($order['id']);
-
-        //     // Update the status in the order table
-        //     $this->orderModel->update($order['id'], ['status' => $shibalData]);
-        // }
-
         $data = [
             'title' => 'Your Orders',
             'order' => $orders
