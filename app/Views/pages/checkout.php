@@ -1,18 +1,6 @@
 <?= $this->extend('layout/template'); ?>
 
 <?= $this->section('content'); ?>
-<div class="container mt-5 mb-4">
-    <h1><strong>Checkout Order</strong></h1>
-    <!-- Alert for row removal -->
-    <?php if (session('errors')) : ?>
-        <div class="alert alert-danger">
-            <ul>
-                <?php foreach (session('errors') as $error) : ?>
-                    <li><?= esc($error) ?></li>
-                <?php endforeach ?>
-            </ul>
-        </div>
-    <?php endif ?>
     <div class="row">
 
         <div class="container mt-3 mb-2">

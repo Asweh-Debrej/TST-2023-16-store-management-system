@@ -11,14 +11,29 @@
 
   <link rel="stylesheet" href="/css/style.css">
 
-  <title><?= $title; ?><</title>
+  <title><?= $title; ?></title>
 </head>
 
 <body>
 
   <?= $this->include('layout/navbar'); ?>
 
-  <?= $this->renderSection('content'); ?>
+  <div class="container mt-5 mb-4">
+    <h1><strong><?= $title ?? '' ?></strong></h1>
+    <!-- Alert for row removal -->
+    <?php if (session('errors')) : ?>
+      <div class="alert alert-danger">
+        <ul>
+          <?php foreach (session('errors') as $error) : ?>
+            <li><?= esc($error) ?></li>
+          <?php endforeach ?>
+        </ul>
+      </div>
+    <?php endif ?>
+
+    <?= $this->renderSection('content'); ?>
+
+  </div>
 
 
   <!-- Optional JavaScript; choose one of the two! -->
