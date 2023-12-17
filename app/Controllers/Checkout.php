@@ -119,20 +119,23 @@ class Checkout extends BaseController
             ],
         ];
 
+        $errors = [];
+
         // Run validation with custom error messages
         if (!$this->validate($validationRules, $validationMessages)) {
-            // If validation fails, return errors in the JSON response
-            return $this->response->setStatusCode(400)->setJSON([
-                'error' => $this->validator->getErrors(),
-            ]);
+            // Retrieve errors from the validator
+            $errors = $this->validator->getErrors();
+
+            // redirect back withinput and error
+            return redirect()->back()->withInput()->with('errors', $errors);
         }
 
         // Check if there is at least one product ordered
         $productTableData = $this->request->getPost('productTable');
         if (empty($productTableData)) {
-            return $this->response->setStatusCode(400)->setJSON([
-                'error' => 'At least one product is required for the order.',
-            ]);
+            $errors[] = 'At least one product is required for the order.';
+            // redirect back withinput and error
+            return redirect()->back()->withInput()->with('errors', $errors);
         }
 
         // Retrieve data from the form

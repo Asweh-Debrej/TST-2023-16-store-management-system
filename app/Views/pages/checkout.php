@@ -4,10 +4,10 @@
 <div class="container mt-5 mb-4">
     <h1><strong>Checkout Order</strong></h1>
     <!-- Alert for row removal -->
-    <?php if ($validation->getErrors()) : ?>
+    <?php if (session('errors')) : ?>
         <div class="alert alert-danger">
             <ul>
-                <?php foreach ($validation->getErrors() as $error) : ?>
+                <?php foreach (session('errors') as $error) : ?>
                     <li><?= esc($error) ?></li>
                 <?php endforeach ?>
             </ul>
@@ -157,25 +157,6 @@
                 setTimeout(function() {
                     removeAlert.classList.add('d-none'); // Hide the alert after a short delay
                 }, 3000); // Adjust the delay (in milliseconds) as needed
-            }
-
-            document.addEventListener('DOMContentLoaded', function() {
-                const placeOrderBtn = document.getElementById('placeOrderBtn');
-
-                placeOrderBtn.addEventListener('click', function(e) {
-                    e.preventDefault(); // Prevent the default form submission
-
-                    // Call a function to handle the order placement
-                    placeOrder();
-                });
-            });
-
-            // Function to handle the order placement
-            function placeOrder() {
-                // ... any additional client-side validation or logic ...
-
-                // Submit the form programmatically
-                document.querySelector('form').submit();
             }
         </script>
 
