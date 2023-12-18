@@ -12,6 +12,8 @@
                         </div>
 
                         <form action="<?= url_to('placeOrder') ?>" method="POST">
+                            <?= csrf_field() ?> <!-- Add CSRF field -->
+
                             <div class="card-body">
                                 <div class="form-group">
                                     <label for="name">Recipient</label>

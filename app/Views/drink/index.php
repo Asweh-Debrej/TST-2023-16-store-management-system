@@ -48,6 +48,7 @@
         <div class="row gap-1">
           <!-- <button href="/checkout" class="col-auto btn btn-primary float-right" id="checkoutBtn">Checkout</button> -->
           <form id="saveCartForm" action="<?= url_to('saveCart') ?>" method="post">
+            <?= csrf_field() ?>
             <?php foreach ($drink as $d) : ?>
               <input type="hidden" name="amountsInput[<?= $d['id'] ?>]" id="amountsInput[<?= $d['id'] ?>]" value="1">
             <?php endforeach; ?>
