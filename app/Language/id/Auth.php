@@ -20,6 +20,8 @@ return [
     'unableSendEmailToUser' => 'Ada masalah saat mengirim email. Tidak dapat mengirim email ke "{0}".',
     'throttled'             => 'Terlalu banyak permintaan yang dibuat dari alamat IP ini. Coba lagi dalam {0} detik.',
     'notEnoughPrivilege'    => 'Anda tidak memiliki izin yang diperlukan untuk melakukan operasi yang diinginkan.',
+    'notLoggedIn'           => 'Anda harus masuk terlebih dahulu.',
+
     // JWT Exceptions
     'invalidJWT'     => 'Token tidak valid.',
     'expiredJWT'     => 'Token telah kedaluwarsa.',
