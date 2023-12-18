@@ -14,8 +14,8 @@
                         <form action="<?= url_to('placeOrder') ?>" method="POST">
                             <div class="card-body">
                                 <div class="form-group">
-                                    <label for="name">Full Name</label>
-                                    <input type="text" class="form-control" id="name" name="name" placeholder="Enter your full name" required autofocus value=<?= old('name') ?>>
+                                    <label for="name">Recipient</label>
+                                    <input type="text" class="form-control" id="name" name="name" placeholder="Enter recipient name" required autofocus value=<?= old('name') ? old('name') : $recipient ?>>
                                 </div>
                                 <div class="form-group">
                                     <label for="address">Address</label>

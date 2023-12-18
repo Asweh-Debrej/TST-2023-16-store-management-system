@@ -29,8 +29,11 @@ class Checkout extends BaseController
             return redirect()->to('login')->withInput()->with('error', lang('Auth.notLoggedIn'));
         }
 
-        $products = [];
         $userId = auth()->id();
+        $user = auth()->getProvider()->findById($userId);
+        $recipient = $user->username;
+
+        $products = [];
         $cartItems = $this->cartModel->getCartItems($userId);
 
         // Iterate through the cart items
@@ -52,7 +55,8 @@ class Checkout extends BaseController
         $data = [
             'title' => 'Checkout',
             'validation' => $validation,
-            'products' => $products
+            'products' => $products,
+            'recipient' => $recipient,
         ];
 
         return view('pages/checkout', $data);
