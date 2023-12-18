@@ -14,6 +14,7 @@ class Checkout extends BaseController {
     protected $orderModel;
     protected $cartModel;
     protected $orderItemModel;
+    protected $client;
 
     public function __construct() {
         $this->checkoutModel = new CheckoutModel();
@@ -21,6 +22,12 @@ class Checkout extends BaseController {
         $this->orderModel = new OrderModel();
         $this->cartModel = new UserCartItemModel();
         $this->orderItemModel = new OrderItemModel();
+
+        $options = [
+            'http_errors' => false,
+            'timeout' => 5,
+        ];
+        $this->client = \Config\Services::curlrequest($options);
     }
 
     public function index() {
@@ -145,20 +152,15 @@ class Checkout extends BaseController {
             return redirect()->back()->withInput()->with('errors', $errors);
         }
 
-        $options = [
-            'http_errors' => false,
-            'timeout' => 5,
-        ];
-        $client = \Config\Services::curlrequest($options);
         $deliveryUrl = getenv('api_delivery_baseUrl') . '/order';
-        $response = $client->post($deliveryUrl, [
+        $response = $this->client->post($deliveryUrl, [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
             ],
             'json' => [
                 'recipient' => $this->request->getPost('name'),
-                'sender' => $deliveryUrl,
+                'sender' => 'JANJI JIWA',
                 'address' => $this->request->getPost('address'),
                 'phone_number' => $this->request->getPost('phone'),
             ],

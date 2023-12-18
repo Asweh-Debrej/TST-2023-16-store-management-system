@@ -6,10 +6,17 @@ use App\Models\OrderModel;
 
 class Status extends BaseController
 {
+    protected $client;
     protected $orderModel;
     public function __construct()
     {
         $this->orderModel = new OrderModel();
+
+        $options = [
+            'http_errors' => false,
+            'timeout' => 5,
+        ];
+        $this->client = \Config\Services::curlrequest($options);
     }
     public function index()
     {
