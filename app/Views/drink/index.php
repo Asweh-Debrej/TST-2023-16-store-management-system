@@ -165,7 +165,7 @@
 
     function onInputHandler() {
       setUnsavedChanges(false);
-      onAmountChanged(<?= count($drink); ?>);
+      onAmountChanged(<?= $d['id'] ?>);
     }
 
     function onAmountChanged(i) {
@@ -186,20 +186,22 @@
     }
 
     function plusItem(i) {
-      var amount = parseInt($("#amount" + i + "Input").val());
+      var inputForm = document.getElementById("amount" + i + "Input");
+      var amount = parseInt(inputForm.value);
       amount++;
-      $("#amount" + i + "Input").val(amount);
+      inputForm.value = amount;
       setUnsavedChanges(true);
       onAmountChanged(i);
     }
 
     function minusItem(i) {
-      var amount = parseInt($("#amount" + i + "Input").val());
+      var inputForm = document.getElementById("amount" + i + "Input");
+      var amount = parseInt(inputForm.value);
       amount--;
       if (amount < 0) {
         amount = 0;
       }
-      $("#amount" + i + "Input").val(amount);
+      inputForm.value = amount;
       setUnsavedChanges(true);
       onAmountChanged(i);
     }
