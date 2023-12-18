@@ -152,11 +152,15 @@ class Checkout extends BaseController {
             return redirect()->back()->withInput()->with('errors', $errors);
         }
 
+        $name = $this->request->getPost('name');
+        $address = $this->request->getPost('address');
+        $phone = $this->request->getPost('phone');
+
         $data = [
-            'recipient' => $this->request->getPost('name'),
+            'recipient' => $name,
             'sender' => 'JANJI JIWA',
-            'address' => $this->request->getPost('address'),
-            'phone_number' => $this->request->getPost('phone'),
+            'address' => $address,
+            'phone_number' => $phone,
         ];
 
         $deliveryUrl = getenv('api_delivery_baseUrl') . '/order';
@@ -222,9 +226,6 @@ class Checkout extends BaseController {
 
         // Retrieve data from the form
         $userId = auth()->id();
-        $name = $this->request->getPost('name');
-        $address = $this->request->getPost('address');
-        $phone = $this->request->getPost('phone');
 
         // Save order information
         $this->orderModel->store([

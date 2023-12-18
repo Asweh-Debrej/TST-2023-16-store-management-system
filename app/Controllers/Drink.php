@@ -20,6 +20,10 @@ class Drink extends BaseController
     $this->initCheckoutSession();
 
     $drink = $this->drinkModel->findAll();
+    foreach ($drink as $key => $d) {
+      $d['harga'] = (int) $d['harga'];
+      $drink[$key] = $d;
+    }
 
     // Dapatkan status add to checkout dari sesi
     $addedToCheckout = session()->get('added_to_checkout', []);
