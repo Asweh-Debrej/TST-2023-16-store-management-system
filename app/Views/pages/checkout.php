@@ -39,14 +39,14 @@
                             <!-- Product List -->
                             <table class="table" id="productTable">
                                 <tbody>
-                                    <?php foreach ($checkout as $c) : ?>
+                                    <?php foreach ($products as $product) : ?>
                                         <tr>
-                                            <td><img src="/img/<?= $c->image ?>" style="width: 50px; height: 50px;"></td>
-                                            <td><?= $c->name ?></td>
+                                            <td><img src="/img/<?= $product['image'] ?>" style="width: 50px; height: 50px;"></td>
+                                            <td><?= $product['name'] ?></td>
                                             <td>
-                                                <input type="number" value="1" min="0" class="small-input quantity-input">
+                                                <input type="number" value=<?= $product['quantity'] ?> min="0" class="small-input quantity-input">
                                             </td>
-                                            <td class="price-column">Rp. <?= $c->price ?></td>
+                                            <td class="price-column">Rp. <?= $product['price'] ?></td>
                                         </tr>
                                     <?php endforeach; ?>
                                     <!-- Add more rows for other products -->
@@ -121,10 +121,10 @@
                     // Update subtotal for each row
                     subtotal += price * quantity;
                     // Check if quantity is 0 and remove the row
-                    if (quantity === 0) {
-                        row.remove();
-                        showRemoveAlert();
-                    }
+                    // if (quantity === 0) {
+                    //     row.remove();
+                    //     showRemoveAlert();
+                    // }
                 });
                 const shippingprice = parseFloat(shippingcost.innerText.replace('Rp. ', ''));
                 total = subtotal + shippingprice

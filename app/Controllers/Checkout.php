@@ -13,43 +13,46 @@ class Checkout extends BaseController
     protected $drinkModel;
     protected $checkoutModel;
     protected $orderModel;
+    protected $cartModel;
 
     public function __construct()
     {
         $this->checkoutModel = new CheckoutModel();
         $this->drinkModel = new DrinkModel();
         $this->orderModel = new OrderModel();
+        $this->cartModel = new UserCartItemModel();
     }
 
     public function index()
     {
-        $checkout = [];
-        $session = session();
+        if (!auth()->loggedIn()) {
+            return redirect()->to('login')->withInput()->with('error', lang('Auth.notLoggedIn'));
+        }
 
-        // Get cart items from the session
-        $cart = $session->get('cart') ?? [];
+        $products = [];
+        $userId = auth()->id();
+        $cartItems = $this->cartModel->getCartItems($userId);
 
         // Iterate through the cart items
-        foreach ($cart as $productId) {
-            $drinkData = $this->drinkModel->find($productId);
+        foreach ($cartItems as $item) {
+            $drinkData = $this->drinkModel->getDrink($item['drink_id']);
 
             if ($drinkData) {
-
-                // Append the product to the array
-                $checkout = [
-                    'productid' => $productId,
+                array_push($products, [
+                    'id' => $drinkData['id'],
                     'name' => $drinkData['produk'],
+                    'price' => $drinkData['harga'],
                     'image' => $drinkData['gambar'],
-                    'price' => $drinkData['harga']
-                ];
-                // You can perform any other operations with each product here
+                    'quantity' => $item['quantity'],
+                ]);
             }
         }
+
         $validation = \Config\Services::validation();
         $data = [
             'title' => 'Checkout',
             'validation' => $validation,
-            'checkout' => $checkout
+            'products' => $products
         ];
 
         return view('pages/checkout', $data);
