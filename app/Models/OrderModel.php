@@ -12,7 +12,7 @@ class OrderModel extends Model
         'user_id', 'name', 'address', 'phone', 'subtotal', 'shipping_cost', 'total_price'
     ];
 
-    public function saveOrder($userId, $name, $address, $phone, $subtotal, $shippingCost, $totalPrice)
+    public function store($userId, $name, $address, $phone, $subtotal, $shippingCost, $totalPrice)
     {
         $data = [
             'user_id' => $userId,

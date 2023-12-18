@@ -51,7 +51,7 @@
             <?php foreach ($drink as $d) : ?>
               <input type="hidden" name="amountsInput[<?= $d['id'] ?>]" id="amountsInput[<?= $d['id'] ?>]" value="1">
             <?php endforeach; ?>
-            <button class="col-auto btn btn-success float-right mr-4" id="saveBtn" onclick="saveOrder()">Save</button>
+            <button class="col-auto btn btn-success float-right mr-4" id="saveBtn" onclick="saveToCart()">Save</button>
           </form>
           <p class="col-auto text-danger" id="unsavedWarning" style="display:none">You have unsaved changes.</p>
         </div>
@@ -203,7 +203,7 @@
       onAmountChanged(i);
     }
 
-    function saveOrder(url = "<?= url_to('saveCart') ?>") {
+    function saveToCart(url = "<?= url_to('saveCart') ?>") {
       <?php foreach ($drink as $d) : ?>
         var amount = parseInt($("#amount<?= $d['id'] ?>Input").val());
         document.getElementById("amountsInput[<?= $d['id'] ?>]").value = amount;

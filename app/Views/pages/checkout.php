@@ -11,7 +11,7 @@
                             Contact and Delivery Information
                         </div>
 
-                        <form action="/checkout/saveOrder" method="POST">
+                        <form action="<?= url_to('placeOrder') ?>" method="POST">
                             <div class="card-body">
                                 <div class="form-group">
                                     <label for="name">Full Name</label>

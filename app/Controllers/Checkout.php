@@ -95,7 +95,7 @@ class Checkout extends BaseController
         }
     }
 
-    public function saveOrder()
+    public function placeOrder()
     {
         // check auth
         // if (!auth()->check()) {
@@ -156,7 +156,7 @@ class Checkout extends BaseController
         $totalPrice = $this->request->getPost('totalPrice');
 
         // Save order information
-        $this->orderModel->saveOrder($id, $name, $address, $phone, $subtotal, $shippingCost, $totalPrice);
+        $this->orderModel->store($id, $name, $address, $phone, $subtotal, $shippingCost, $totalPrice);
 
         // Save order items
         // foreach ($productTableData as $product) {
