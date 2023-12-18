@@ -26,6 +26,7 @@
       <div class="navbar-nav">
         <a class="nav-link" href="/status">Status</a>
         <a class="nav-link" href="/login">Login</a>
+        <a class="nav-link" href="/checkout">Checkout</a>
       </div>
     </div>
   </div>
