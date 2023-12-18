@@ -43,10 +43,10 @@
       </div>
 
       <h1 class="mt-4">List of Drinks</h1>
+      <?php if ($hasLoggedIn) : ?>
       <div class="container">
-
         <div class="row gap-1">
-          <button href="/checkout" class="col-auto btn btn-primary float-right" id="checkoutBtn">Checkout</button>
+          <!-- <button href="/checkout" class="col-auto btn btn-primary float-right" id="checkoutBtn">Checkout</button> -->
           <form id="saveCartForm" action="<?= url_to('saveCart') ?>" method="post">
             <?php foreach ($drink as $d) : ?>
               <input type="hidden" name="amountsInput[<?= $d['id'] ?>]" id="amountsInput[<?= $d['id'] ?>]" value="1">
@@ -56,6 +56,7 @@
           <p class="col-auto text-danger" id="unsavedWarning" style="display:none">You have unsaved changes.</p>
         </div>
       </div>
+      <?php endif; ?>
       <table class="table">
         <thead>
           <tr>
@@ -64,7 +65,9 @@
             <th scope="col">Nama Produk</th>
             <th scope="col">Harga</th>
             <th scope="col">Buy</th>
+            <?php if ($hasLoggedIn) : ?>
             <th scope="col">Jumlah</th>
+            <?php endif; ?>
           </tr>
         </thead>
         <tbody>
@@ -75,6 +78,7 @@
               <td><img src="/img/<?= $d['gambar']; ?>" alt="" class="product" style="max-height: 80px; min-height: 80px"></td>
               <td><?= $d['produk']; ?></td>
               <td>Rp.<?= $d['harga']; ?>.00</td>
+              <?php if ($hasLoggedIn) : ?>
               <td>
                 <div class="input-group">
                   <div class="input-group-prepend">
@@ -91,6 +95,11 @@
                   Rp. <span id="price<?= $d['id'] ?>Span" data-price="<?= $d['harga']; ?>"><?= $d['total'] ?? $d['harga']; ?></span>.00
                 </p>
               </td>
+              <?php else : ?>
+                <td colspan="2">
+                  <a href="/login" class="btn btn-primary">Login to Buy</a>
+                </td>
+              <?php endif; ?>
             </tr>
           <?php endforeach; ?>
         </tbody>
@@ -105,12 +114,17 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script>
   var unsavedChanges = false;
-  $(document).ready(function() {
-    $(window).on('beforeunload', function() {
-      if (unsavedChanges !== undefined ? unsavedChanges : false) {
-        return 'You have unsaved changes. Are you sure you want to leave this page?';
+  window.onload = () => {
+    window.addEventListener("beforeunload", function(e) {
+      if (unsavedChanges) {
+        var confirmationMessage = "You have unsaved changes. Are you sure to leave this page?";
+        (e || window.event).returnValue = confirmationMessage;
+        return confirmationMessage;
       }
     });
+  }
+
+  $(document).ready(function() {
 
     // prevent default save button
     $("#saveBtn").click(function(e) {
@@ -140,69 +154,69 @@
     });
   });
 
-  function onBlurHandler(inputId) {
-    if ($("#" + inputId).val() == "") {
-      $("#" + inputId).val(0);
+  <?php if ($hasLoggedIn) : ?>
+
+    function onBlurHandler(inputId) {
+      if ($("#" + inputId).val() == "") {
+        $("#" + inputId).val(0);
+      }
     }
-  }
 
-  function onInputHandler() {
-    setChangesSaved(false);
-    onAmountChanged(<?= count($drink); ?>);
-
-  }
-
-  function onAmountChanged(i) {
-    var amount = parseInt($("#amount" + i + "Input").val());
-    var price = parseInt($("#price" + i + "Span").attr("data-price"));
-    var totalPrice = amount * price;
-    console.log(totalPrice, amount, price);
-    $("#price" + i + "Span").html(totalPrice);
-    $("#amountsInput[<?= $d['id'] ?>]").val(amount);
-  }
-
-  function setChangesSaved(changesSaved) {
-    if (changesSaved) {
-      $("#unsavedWarning").hide();
-    } else {
-      $("#unsavedWarning").show();
+    function onInputHandler() {
+      setUnsavedChanges(false);
+      onAmountChanged(<?= count($drink); ?>);
     }
-  }
 
-  function plusItem(i) {
-    var amount = parseInt($("#amount" + i + "Input").val());
-    amount++;
-    $("#amount" + i + "Input").val(amount);
-    setChangesSaved(false);
-    onAmountChanged(i);
-  }
-
-  function minusItem(i) {
-    var amount = parseInt($("#amount" + i + "Input").val());
-    amount--;
-    if (amount < 0) {
-      amount = 0;
+    function onAmountChanged(i) {
+      var amount = parseInt($("#amount" + i + "Input").val());
+      var price = parseInt($("#price" + i + "Span").attr("data-price"));
+      var totalPrice = amount * price;
+      $("#price" + i + "Span").html(totalPrice);
+      $("#amountsInput[<?= $d['id'] ?>]").val(amount);
     }
-    $("#amount" + i + "Input").val(amount);
-    setChangesSaved(false);
-    onAmountChanged(i);
-  }
 
-  function saveOrder() {
-    // console log drink
-    <?php foreach ($drink as $d) : ?>
-      var amount = parseInt($("#amount<?= $d['id'] ?>Input").val());
-      document.getElementById("amountsInput[<?= $d['id'] ?>]").value = amount;
-    <?php endforeach; ?>
+    function setUnsavedChanges(isUnsaved) {
+      unsavedChanges = isUnsaved;
+      if (!isUnsaved) {
+        $("#unsavedWarning").hide();
+      } else {
+        $("#unsavedWarning").show();
+      }
+    }
 
-    // Mendapatkan elemen form
-    var form = document.getElementById('saveCartForm');
+    function plusItem(i) {
+      var amount = parseInt($("#amount" + i + "Input").val());
+      amount++;
+      $("#amount" + i + "Input").val(amount);
+      setUnsavedChanges(true);
+      onAmountChanged(i);
+    }
 
-    // // Submit formulir
-    form.submit();
+    function minusItem(i) {
+      var amount = parseInt($("#amount" + i + "Input").val());
+      amount--;
+      if (amount < 0) {
+        amount = 0;
+      }
+      $("#amount" + i + "Input").val(amount);
+      setUnsavedChanges(true);
+      onAmountChanged(i);
+    }
 
-    setChangesSaved(true);
-  }
+    function saveOrder(url = "<?= url_to('saveCart') ?>") {
+      <?php foreach ($drink as $d) : ?>
+        var amount = parseInt($("#amount<?= $d['id'] ?>Input").val());
+        document.getElementById("amountsInput[<?= $d['id'] ?>]").value = amount;
+      <?php endforeach; ?>
+
+      var form = document.getElementById('saveCartForm');
+      form.action = url;
+
+      form.submit();
+
+      setUnsavedChanges(false);
+    }
+  <?php endif; ?>
 </script>
 
 <?= $this->endSection(); ?>
