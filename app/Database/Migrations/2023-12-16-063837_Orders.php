@@ -54,7 +54,12 @@ class Orders extends Migration
             'status' => [
                 'type' => 'VARCHAR',
                 'constraint' => 50,
-            ]
+            ],
+            'delivery_id' => [
+                'type' => 'INT',
+                'constraint' => 5,
+                'unsigned' => true,
+            ],
         ]);
 
         $this->forge->addKey('id', true);

@@ -9,21 +9,11 @@ class OrderModel extends Model
     protected $table = 'orders';
     protected $useTimestamps = true;
     protected $allowedFields = [
-        'user_id', 'name', 'address', 'phone', 'subtotal', 'shipping_cost', 'total_price'
+        'user_id', 'name', 'address', 'phone', 'subtotal', 'shipping_cost', 'total_price', 'delivery_id'
     ];
 
-    public function store($userId, $name, $address, $phone, $subtotal, $shippingCost, $totalPrice)
+    public function store($data)
     {
-        $data = [
-            'user_id' => $userId,
-            'name' => $name,
-            'address' => $address,
-            'phone' => $phone,
-            'subtotal' => $subtotal,
-            'shipping_cost' => $shippingCost,
-            'total_price' => $totalPrice,
-        ];
-
         return $this->insert($data);
     }
 }

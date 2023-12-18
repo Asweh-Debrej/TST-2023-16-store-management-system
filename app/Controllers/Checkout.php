@@ -145,7 +145,34 @@ class Checkout extends BaseController {
             return redirect()->back()->withInput()->with('errors', $errors);
         }
 
-        $shippingCost = 5000; // Hardcoded shipping cost
+        $options = [
+            'http_errors' => false,
+            'timeout' => 5,
+        ];
+        $client = \Config\Services::curlrequest($options);
+        $deliveryUrl = getenv('api_delivery_baseUrl') . '/order';
+        $response = $client->post($deliveryUrl, [
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+            ],
+            'json' => [
+                'recipient' => $this->request->getPost('name'),
+                'sender' => $deliveryUrl,
+                'address' => $this->request->getPost('address'),
+                'phone_number' => $this->request->getPost('phone'),
+            ],
+        ]);
+
+        if ($response->getStatusCode() !== 201) {
+            $errors[] = 'Failed to place order. Please try again later.';
+
+            return redirect()->back()->withInput()->with('errors', $errors);
+        }
+
+        $deliveryData = json_decode($response->getBody(), true);
+        $delivery_id = $deliveryData['data']['id'];
+        $delivery_fee = $deliveryData['data']['total_amount'];
         $subtotal = 0;
         $productTableData = [];
         foreach ($amounts as $id => $amount) {
@@ -171,7 +198,7 @@ class Checkout extends BaseController {
             return redirect()->back()->withInput()->with('errors', $errors);
         }
 
-        $totalPrice = $subtotal + $shippingCost;
+        $totalPrice = $subtotal + $delivery_fee;
 
         // Retrieve data from the form
         $userId = auth()->id();
@@ -180,7 +207,16 @@ class Checkout extends BaseController {
         $phone = $this->request->getPost('phone');
 
         // Save order information
-        $this->orderModel->store($userId, $name, $address, $phone, $subtotal, $shippingCost, $totalPrice);
+        $this->orderModel->store([
+            'user_id' => $userId,
+            'name' => $name,
+            'address' => $address,
+            'phone' => $phone,
+            'subtotal' => $subtotal,
+            'shipping_cost' => $delivery_fee,
+            'total_price' => $totalPrice,
+            'delivery_id' => $delivery_id,
+        ]);
 
         // Save order details
         $orderId = $this->orderModel->getInsertID();
