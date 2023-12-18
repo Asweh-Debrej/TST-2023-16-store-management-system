@@ -152,19 +152,37 @@ class Checkout extends BaseController {
             return redirect()->back()->withInput()->with('errors', $errors);
         }
 
+        $data = [
+            'recipient' => $this->request->getPost('name'),
+            'sender' => 'JANJI JIWA',
+            'address' => $this->request->getPost('address'),
+            'phone_number' => $this->request->getPost('phone'),
+        ];
+
         $deliveryUrl = getenv('api_delivery_baseUrl') . '/order';
         $response = $this->client->post($deliveryUrl, [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
+                'Authorization' => 'Bearer ' . getenv('api_delivery_token'),
             ],
-            'json' => [
-                'recipient' => $this->request->getPost('name'),
-                'sender' => 'JANJI JIWA',
-                'address' => $this->request->getPost('address'),
-                'phone_number' => $this->request->getPost('phone'),
-            ],
+            'json' => $data,
         ]);
+
+        if ($response->getStatusCode() === 401) {
+            if (delivery_login()) {
+                $response = $this->client->post($deliveryUrl, [
+                    'headers' => [
+                        'Content-Type' => 'application/json',
+                        'Accept' => 'application/json',
+                        'Authorization' => 'Bearer ' . getenv('api_delivery_token'),
+                    ],
+                    'json' => $data,
+                ]);
+            } else {
+                $errors[] = 'Failed to login to delivery service. Please try again later.';
+            }
+        }
 
         if ($response->getStatusCode() !== 201) {
             $errors[] = 'Failed to place order. Please try again later.';
