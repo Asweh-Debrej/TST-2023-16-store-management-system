@@ -6,25 +6,24 @@ use App\Models\CheckoutModel;
 use App\Models\DrinkModel;
 use App\Models\OrderModel;
 use App\Models\UserCartItemModel;
-use Config\Auth;
+use App\Models\OrderItemModel;
 
-class Checkout extends BaseController
-{
+class Checkout extends BaseController {
     protected $drinkModel;
     protected $checkoutModel;
     protected $orderModel;
     protected $cartModel;
+    protected $orderItemModel;
 
-    public function __construct()
-    {
+    public function __construct() {
         $this->checkoutModel = new CheckoutModel();
         $this->drinkModel = new DrinkModel();
         $this->orderModel = new OrderModel();
         $this->cartModel = new UserCartItemModel();
+        $this->orderItemModel = new OrderItemModel();
     }
 
-    public function index()
-    {
+    public function index() {
         if (!auth()->loggedIn()) {
             return redirect()->to('login')->withInput()->with('error', lang('Auth.notLoggedIn'));
         }
@@ -62,8 +61,7 @@ class Checkout extends BaseController
         return view('pages/checkout', $data);
     }
 
-    public function initCheckoutSession()
-    {
+    public function initCheckoutSession() {
         $session = session();
 
         // Inisialisasi atau reset sesi checkout
@@ -74,8 +72,7 @@ class Checkout extends BaseController
         return true; // Untuk memberi tahu bahwa inisialisasi berhasil
     }
 
-    public function updateQuantity()
-    {
+    public function updateQuantity() {
         $productId = $this->request->getPost('productId');
         $quantity = $this->request->getPost('quantity');
 
@@ -99,13 +96,11 @@ class Checkout extends BaseController
         }
     }
 
-    public function placeOrder()
-    {
-        // check auth
-        // if (!auth()->check()) {
-        //     return redirect()->to('/login');
-        // }
-        // Define validation rules with custom error messages
+    public function placeOrder() {
+        if (!auth()->loggedIn()) {
+            return redirect()->to('login')->withInput()->with('error', lang('Auth.notLoggedIn'));
+        }
+
         $validationRules = [
             'name' => 'required|min_length[3]|max_length[255]',
             'address' => 'required|min_length[5]|max_length[255]',
@@ -142,32 +137,61 @@ class Checkout extends BaseController
             return redirect()->back()->withInput()->with('errors', $errors);
         }
 
-        // Check if there is at least one product ordered
-        $productTableData = $this->request->getPost('productTable');
-        if (empty($productTableData)) {
-            $errors[] = 'At least one product is required for the order.';
-            // redirect back withinput and error
+        $amounts = $this->request->getPost('amounts');
+
+        if (empty($amounts)) {
+            $errors[] = 'Please add some products to your cart first.';
+
             return redirect()->back()->withInput()->with('errors', $errors);
         }
 
+        $shippingCost = 5000; // Hardcoded shipping cost
+        $subtotal = 0;
+        $productTableData = [];
+        foreach ($amounts as $id => $amount) {
+            if ($amount <= 0) {
+                continue;
+            }
+
+            if (!$this->drinkModel->find($id)) {
+                continue;
+            }
+
+            $subtotal += $this->drinkModel->find($id)['harga'] * $amount;
+            array_push($productTableData, [
+                'product_id' => $id,
+                'price' => $this->drinkModel->find($id)['harga'],
+                'quantity' => $amount,
+            ]);
+        }
+
+        if ($subtotal <= 0) {
+            $errors[] = 'Please add some products to your cart first.';
+
+            return redirect()->back()->withInput()->with('errors', $errors);
+        }
+
+        $totalPrice = $subtotal + $shippingCost;
+
         // Retrieve data from the form
-        $id = 1;
+        $userId = auth()->id();
         $name = $this->request->getPost('name');
         $address = $this->request->getPost('address');
         $phone = $this->request->getPost('phone');
-        $subtotal = $this->request->getPost('subtotal');
-        $shippingCost = $this->request->getPost('shippingcost');
-        $totalPrice = $this->request->getPost('totalPrice');
 
         // Save order information
-        $this->orderModel->store($id, $name, $address, $phone, $subtotal, $shippingCost, $totalPrice);
+        $this->orderModel->store($userId, $name, $address, $phone, $subtotal, $shippingCost, $totalPrice);
 
-        // Save order items
-        // foreach ($productTableData as $product) {
-        //     $this->orderModel->saveOrderItem($orderId, $product['product_id'], $product['quantity'], $product['price']);
-        // }
+        // Save order details
+        $orderId = $this->orderModel->getInsertID();
+        $this->orderItemModel->store($orderId, $productTableData);
 
-        return $this->response->setJSON(['status' => 'success', 'message' => 'Order placed successfully!']);
+        // Clear the cart
+        $this->cartModel->deleteAllCartItems($userId);
+
+        $successes = ['Order placed!'];
+
+        return redirect()->to('status')->with('successes', $successes);
     }
 
     public function storeCart() {

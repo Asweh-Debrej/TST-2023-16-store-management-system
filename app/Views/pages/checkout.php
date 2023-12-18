@@ -44,7 +44,7 @@
                                             <td><img src="/img/<?= $product['image'] ?>" style="width: 50px; height: 50px;"></td>
                                             <td><?= $product['name'] ?></td>
                                             <td>
-                                                <input type="number" value=<?= $product['quantity'] ?> min="0" class="small-input quantity-input">
+                                                <input type="number" name="amounts[<?= $product['id'] ?>]" value=<?= $product['quantity'] ?> min="0" class="small-input quantity-input">
                                             </td>
                                             <td class="price-column">Rp. <?= $product['price'] ?></td>
                                         </tr>
