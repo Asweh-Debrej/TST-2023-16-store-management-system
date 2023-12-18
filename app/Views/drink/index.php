@@ -12,19 +12,19 @@
         <div id="drinkCarousel" class="carousel slide" data-ride="carousel">
           <div class="carousel-inner">
             <!-- Recommendation 1: Es Kopi Susu -->
-            <div class="carousel-item active">
+            <div class="carousel-item active justify-content-center">
               <h5 class="text-center">Es Kopi Susu</h5>
               <p class="text-center">Creamy and delicious coffee with milk.</p>
-              <img src="/img/eskopisusu.png" class="d-block w-100" alt="Es Kopi Susu">
+              <img src="/img/eskopisusu.png" class="d-block" alt="Es Kopi Susu" style="max-height: 400px; min-height: 400px">
               <div class="carousel-caption d-none d-md-block text-dark">
               </div>
             </div>
 
             <!-- Recommendation 2: Es Matcha -->
-            <div class="carousel-item">
+            <div class="carousel-item justify-content-center">
               <h5 class="text-center">Es Matcha</h5>
               <p class="text-center">Refreshing green tea matcha served iced.</p>
-              <img src="/img/esmatcha.png" class="d-block w-100" alt="Es Matcha">
+              <img src="/img/esmatcha.png" class="d-block" alt="Es Matcha" style="max-height: 400px; min-height: 400px">
               <div class="carousel-caption d-none d-md-block text-dark">
               </div>
             </div>
@@ -43,7 +43,19 @@
       </div>
 
       <h1 class="mt-4">List of Drinks</h1>
-      <a href="/checkout" class="btn btn-primary float-right" id="checkoutBtn">Checkout</a>
+      <div class="container">
+
+        <div class="row gap-1">
+          <button href="/checkout" class="col-auto btn btn-primary float-right" id="checkoutBtn">Checkout</button>
+          <form id="saveCartForm" action="<?= url_to('saveCart') ?>" method="post">
+            <?php foreach ($drink as $d) : ?>
+              <input type="hidden" name="amountsInput[<?= $d['id'] ?>]" id="amountsInput[<?= $d['id'] ?>]" value="1">
+            <?php endforeach; ?>
+            <button class="col-auto btn btn-success float-right mr-4" id="saveBtn" onclick="saveOrder()">Save</button>
+          </form>
+          <p class="col-auto text-danger" id="unsavedWarning" style="display:none">You have unsaved changes.</p>
+        </div>
+      </div>
       <table class="table">
         <thead>
           <tr>
@@ -52,6 +64,7 @@
             <th scope="col">Nama Produk</th>
             <th scope="col">Harga</th>
             <th scope="col">Buy</th>
+            <th scope="col">Jumlah</th>
           </tr>
         </thead>
         <tbody>
@@ -59,19 +72,24 @@
           <?php foreach ($drink as $d) : ?>
             <tr>
               <th scope="row"><?= $i++; ?></th>
-              <td><img src="/img/<?= $d['gambar']; ?>" alt="" class="product"></td>
+              <td><img src="/img/<?= $d['gambar']; ?>" alt="" class="product" style="max-height: 80px; min-height: 80px"></td>
               <td><?= $d['produk']; ?></td>
-              <td>Rp.<?= $d['harga']; ?></td>
+              <td>Rp.<?= $d['harga']; ?>.00</td>
               <td>
-                <?php
-                // Generate a unique session key for each product
-                $sessionKey = 'cart_' . $d['id'];
-
-                if (session()->has($sessionKey)) : ?>
-                  <span class="text-success">Added to Checkout</span>
-                <?php else : ?>
-                  <a href="#" class="btn btn-primary add-to-cart" data-id="<?= $d['id']; ?>">Add to Checkout</a>
-                <?php endif; ?>
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <button class="btn btn-outline-secondary" type="button" id="minus<?= $d['id'] ?>Btn" onclick="minusItem(<?= $d['id'] ?>)">-</button>
+                  </div>
+                  <input type="text" class="form-control" value="1" id="amount<?= $d['id'] ?>Input" style="min-width: 54px; max-width: 60px;" onblur="onBlurHandler('amount<?= $d['id'] ?>Input')" onchange="onInputHandler()">
+                  <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button" id="plus<?= $d['id'] ?>Btn" onclick="plusItem(<?= $d['id'] ?>)">+</button>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <p>
+                  Rp. <span id="price<?= $d['id'] ?>Span" data-price="<?= $d['harga']; ?>"><?= $d['total'] ?? $d['harga']; ?></span>.00
+                </p>
               </td>
             </tr>
           <?php endforeach; ?>
@@ -86,7 +104,19 @@
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script>
+  var unsavedChanges = false;
   $(document).ready(function() {
+    $(window).on('beforeunload', function() {
+      if (unsavedChanges !== undefined ? unsavedChanges : false) {
+        return 'You have unsaved changes. Are you sure you want to leave this page?';
+      }
+    });
+
+    // prevent default save button
+    $("#saveBtn").click(function(e) {
+      e.preventDefault();
+    });
+
     // Initialize the carousel
     $('#drinkCarousel').carousel();
 
@@ -109,6 +139,70 @@
       });
     });
   });
+
+  function onBlurHandler(inputId) {
+    if ($("#" + inputId).val() == "") {
+      $("#" + inputId).val(0);
+    }
+  }
+
+  function onInputHandler() {
+    setChangesSaved(false);
+    onAmountChanged(<?= count($drink); ?>);
+
+  }
+
+  function onAmountChanged(i) {
+    var amount = parseInt($("#amount" + i + "Input").val());
+    var price = parseInt($("#price" + i + "Span").attr("data-price"));
+    var totalPrice = amount * price;
+    console.log(totalPrice, amount, price);
+    $("#price" + i + "Span").html(totalPrice);
+    $("#amountsInput[<?= $d['id'] ?>]").val(amount);
+  }
+
+  function setChangesSaved(changesSaved) {
+    if (changesSaved) {
+      $("#unsavedWarning").hide();
+    } else {
+      $("#unsavedWarning").show();
+    }
+  }
+
+  function plusItem(i) {
+    var amount = parseInt($("#amount" + i + "Input").val());
+    amount++;
+    $("#amount" + i + "Input").val(amount);
+    setChangesSaved(false);
+    onAmountChanged(i);
+  }
+
+  function minusItem(i) {
+    var amount = parseInt($("#amount" + i + "Input").val());
+    amount--;
+    if (amount < 0) {
+      amount = 0;
+    }
+    $("#amount" + i + "Input").val(amount);
+    setChangesSaved(false);
+    onAmountChanged(i);
+  }
+
+  function saveOrder() {
+    // console log drink
+    <?php foreach ($drink as $d) : ?>
+      var amount = parseInt($("#amount<?= $d['id'] ?>Input").val());
+      document.getElementById("amountsInput[<?= $d['id'] ?>]").value = amount;
+    <?php endforeach; ?>
+
+    // Mendapatkan elemen form
+    var form = document.getElementById('saveCartForm');
+
+    // // Submit formulir
+    form.submit();
+
+    setChangesSaved(true);
+  }
 </script>
 
 <?= $this->endSection(); ?>

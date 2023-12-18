@@ -12,7 +12,11 @@ class UserCartItemModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = [];
+    protected $allowedFields    = [
+        'user_id',
+        'drink_id',
+        'quantity',
+    ];
 
     // Dates
     protected $useTimestamps = false;
@@ -50,5 +54,12 @@ class UserCartItemModel extends Model
         $cartModel = new UserCartItemModel();
 
         return $cartModel->where('user_id', $userId)->where('drink_id', $drinkId)->first();
+    }
+
+    public function deleteAllCartItems(int $userId)
+    {
+        $cartModel = new UserCartItemModel();
+
+        return $cartModel->where('user_id', $userId)->delete();
     }
 }

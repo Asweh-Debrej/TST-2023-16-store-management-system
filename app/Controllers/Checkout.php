@@ -5,7 +5,8 @@ namespace App\Controllers;
 use App\Models\CheckoutModel;
 use App\Models\DrinkModel;
 use App\Models\OrderModel;
-use stdClass;
+use App\Models\UserCartItemModel;
+use Config\Auth;
 
 class Checkout extends BaseController
 {
@@ -33,15 +34,15 @@ class Checkout extends BaseController
             $drinkData = $this->drinkModel->find($productId);
 
             if ($drinkData) {
-                $product = new stdClass();
-                $product->productid = $productId;
-                $product->name = $drinkData['produk'];
-                $product->image = $drinkData['gambar'];
-                $product->price = $drinkData['harga'];
 
                 // Append the product to the array
-                $checkout[] = $product;
-                // You can perfo rm any other operations with each product here
+                $checkout = [
+                    'productid' => $productId,
+                    'name' => $drinkData['produk'],
+                    'image' => $drinkData['gambar'],
+                    'price' => $drinkData['harga']
+                ];
+                // You can perform any other operations with each product here
             }
         }
         $validation = \Config\Services::validation();
@@ -72,7 +73,7 @@ class Checkout extends BaseController
         $quantity = $this->request->getPost('quantity');
 
         // Retrieve the current cart from the session
-        $cart = session()->get('cart', []);
+        $cart = session()->get('cart');
 
         // Find the index of the product in the cart
         $index = array_search($productId, $cart);
@@ -93,6 +94,10 @@ class Checkout extends BaseController
 
     public function saveOrder()
     {
+        // check auth
+        // if (!auth()->check()) {
+        //     return redirect()->to('/login');
+        // }
         // Define validation rules with custom error messages
         $validationRules = [
             'name' => 'required|min_length[3]|max_length[255]',
@@ -156,5 +161,38 @@ class Checkout extends BaseController
         // }
 
         return $this->response->setJSON(['status' => 'success', 'message' => 'Order placed successfully!']);
+    }
+
+    public function storeCart() {
+
+        if (!auth()->loggedIn()) {
+            return redirect()->to('login')->withInput()->with('error', lang('Auth.notLoggedIn'));
+        }
+
+        $userId = auth()->id();
+        $amounts = $this->request->getPost('amountsInput');
+
+        $cartModel = new UserCartItemModel();
+        $cartModel->deleteAllCartItems($userId);
+
+        foreach ($amounts as $id => $amount) {
+            if ($amount <= 0) {
+                continue;
+            }
+
+            if (!$this->drinkModel->find($id)) {
+                continue;
+            }
+
+            $cartModel->insert([
+                'user_id' => $userId,
+                'drink_id' => $id,
+                'quantity' => $amount,
+            ]);
+        }
+
+        $successes = ['Cart updated!'];
+
+        return redirect()->back()->with('successes', $successes);
     }
 }
