@@ -32,7 +32,7 @@
 <nav class="navbar navbar-expand-lg custom-navbar">
   <div class="container">
     <a class="navbar-brand" href="/">
-      <i class="fas fa-truck delivery-icon"></i> Janji Jiwa
+      <i class="fa-solid fa-mug-saucer"></i> Janji Jiwa
     </a>
     <a class="navbar-brand" href="/">
       <span class="not-bold">Buy Beverages</span>
@@ -49,7 +49,7 @@
     <div class="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
       <div class="navbar-nav">
         <?php if (auth()->loggedIn()) : ?>
-          <a class="nav-link" href="/cart">
+          <a class="nav-link" href="/checkout">
             <i class="fas fa-shopping-cart"></i> Cart
           </a>
           <a class="nav-link login-link" href="/logout">
