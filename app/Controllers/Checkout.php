@@ -173,7 +173,7 @@ class Checkout extends BaseController {
             'json' => $data,
         ]);
 
-        if ($response->getStatusCode() === 401) {
+        if ($response->getStatusCode() === 401 || $response->getStatusCode() === 302) {
             if (delivery_login()) {
                 $response = $this->client->post($deliveryUrl, [
                     'headers' => [
