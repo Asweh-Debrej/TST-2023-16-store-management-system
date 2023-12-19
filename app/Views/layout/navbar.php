@@ -52,12 +52,15 @@
           <a class="nav-link" href="/cart">
             <i class="fas fa-shopping-cart"></i> Cart
           </a>
+          <a class="nav-link login-link" href="/logout">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </a>
         <?php else : ?>
           <a class="nav-link login-link" href="/register">
             <i class="fas fa-user-plus"></i> Register
           </a>
-          <a class="nav-link login-link" href="/logout">
-            <i class="fas fa-sign-out-alt"></i> Logout
+          <a class="nav-link login-link" href="/login">
+            <i class="fas fa-sign-out-alt"></i> Login
           </a>
         <?php endif; ?>
       </div>
