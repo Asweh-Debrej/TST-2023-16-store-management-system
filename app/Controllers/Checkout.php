@@ -190,6 +190,8 @@ class Checkout extends BaseController {
 
         if ($response->getStatusCode() !== 201) {
             $errors[] = 'Failed to place order. Please try again later.';
+            $errors[] = $response->getStatusCode() . ' ' . $response->getReasonPhrase();
+            $errors[] = $response->getBody();
 
             return redirect()->back()->withInput()->with('errors', $errors);
         }
