@@ -158,7 +158,7 @@ class Checkout extends BaseController {
 
         $data = [
             'recipient' => $name,
-            'sender' => 'JANJI JIWA',
+            'sender' => getenv('api_delivery_origin'),
             'address' => $address,
             'phone_number' => $phone,
         ];
