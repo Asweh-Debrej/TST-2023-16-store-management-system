@@ -21,7 +21,13 @@ class Status extends BaseController
     }
     public function index()
     {
-        $orders = $this->orderModel->findAll();
+        if (!auth()->loggedIn()) {
+            return redirect()->to('/login')->with('errors', ['You must login first']);
+        }
+
+        // mencari order berdasarkan user_id
+        $user_id = auth()->id();
+        $orders = $this->orderModel->where('user_id', $user_id)->findAll();
 
         foreach ($orders as $key => $o) {
             $response = $this->client->get(getenv('api_delivery_baseUrl') .  '/order/' . $o['delivery_id'], [
