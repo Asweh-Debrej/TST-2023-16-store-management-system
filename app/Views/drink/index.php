@@ -85,7 +85,7 @@
                   <div class="input-group-prepend">
                     <button class="btn btn-outline-secondary" type="button" id="minus<?= $d['id'] ?>Btn" onclick="minusItem(<?= $d['id'] ?>)">-</button>
                   </div>
-                  <input type="text" class="form-control" value="1" id="amount<?= $d['id'] ?>Input" style="min-width: 54px; max-width: 60px;" onblur="onBlurHandler('amount<?= $d['id'] ?>Input')" onchange="onInputHandler()">
+                  <input type="text" class="form-control" value="1" id="amount<?= $d['id'] ?>Input" style="min-width: 54px; max-width: 60px;" onblur="onBlurHandler('amount<?= $d['id'] ?>Input')" onchange="onInputHandler(<?= $d['id'] ?>)">
                   <div class="input-group-append">
                     <button class="btn btn-outline-secondary" type="button" id="plus<?= $d['id'] ?>Btn" onclick="plusItem(<?= $d['id'] ?>)">+</button>
                   </div>
@@ -163,9 +163,9 @@
       }
     }
 
-    function onInputHandler() {
+    function onInputHandler(i) {
       setUnsavedChanges(false);
-      onAmountChanged(<?= $d['id'] ?>);
+      onAmountChanged(i);
     }
 
     function onAmountChanged(i) {
@@ -173,7 +173,7 @@
       var price = parseInt($("#price" + i + "Span").attr("data-price"));
       var totalPrice = amount * price;
       $("#price" + i + "Span").html(totalPrice);
-      $("#amountsInput[<?= $d['id'] ?>]").val(amount);
+      $("#amountsInput[" + i + "]").val(amount);
     }
 
     function setUnsavedChanges(isUnsaved) {
