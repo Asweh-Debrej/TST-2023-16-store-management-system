@@ -38,7 +38,7 @@ class Status extends BaseController
                 ],
             ]);
 
-            if ($response->getStatusCode() === 401) {
+            if ($response->getStatusCode() === 401 || $response->getStatusCode() === 302) {
                 if (delivery_login()) {
                     $response = $this->client->get(getenv('api_delivery_baseUrl') .  '/order/' . $o['delivery_id'], [
                         'headers' => [

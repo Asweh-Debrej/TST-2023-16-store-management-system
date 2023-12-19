@@ -1,71 +1,69 @@
 <style>
   .custom-navbar {
-    background-color: #3498db;
+    background-color: #247DFF;
     /* Warna biru contoh */
   }
 
-  .custom-navbar .navbar-brand,
-  .custom-navbar .navbar-nav .nav-link {
+  .not-bold {
+    font-weight: normal;
+  }
+
+  .custom-navbar .navbar-brand {
+    color: #ffffff;
+    /* Warna teks putih contoh */
+    font-weight: bold;
+    /* Make the text bold */
+  }
+
+  .custom-navbar .navbar-nav .nav-link,
+  .custom-navbar .navbar-nav .login-link {
     color: #ffffff;
     /* Warna teks putih contoh */
   }
 
-  .custom-navbar .navbar-nav .nav-link:hover {
+  .custom-navbar .navbar-nav .nav-link:hover,
+  .custom-navbar .navbar-nav .login-link:hover {
     color: #DDDD;
     /* Warna teks putih pada hover contoh */
   }
 </style>
 
+
 <nav class="navbar navbar-expand-lg custom-navbar">
   <div class="container">
-    <a class="navbar-brand mx-2 font-weight-bold" href="/">Drink Store</a>
+    <a class="navbar-brand" href="/">
+      <i class="fa-solid fa-mug-saucer"></i> Janji Jiwa
+    </a>
+    <a class="navbar-brand" href="/">
+      <span class="not-bold">Buy Beverages</span>
+    </a>
+    <a class="navbar-brand" href="/status">
+      <span class="not-bold">My Orders</span>
+    </a>
+    <a class="navbar-brand" href="/checkout">
+      <span class="not-bold">Checkout</span>
+    </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
       <div class="navbar-nav">
-        <a class="nav-link" href="/status">Status</a>
-        <a class="nav-link" href="/login">Login</a>
-        <a class="nav-link" href="/checkout">Checkout</a>
+        <?php if (auth()->loggedIn()) : ?>
+          <a class="nav-link" href="/checkout">
+            <i class="fas fa-shopping-cart"></i> Cart
+          </a>
+          <a class="nav-link login-link" href="/logout">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </a>
+        <?php else : ?>
+          <a class="nav-link login-link" href="/register">
+            <i class="fas fa-user-plus"></i> Register
+          </a>
+          <a class="nav-link login-link" href="/login">
+            <i class="fas fa-sign-out-alt"></i> Login
+          </a>
+        <?php endif; ?>
       </div>
     </div>
   </div>
 </nav>
-
-<!-- Rekomen Buat nunjukkin login pas belom in, logout pas loggedin -->
-<!-- <nav class="navbar navbar-expand-lg custom-navbar">
-  <div class="container">
-    <a class="navbar-brand mx-2" href="/">Drink Store</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-      <div class="navbar-nav ml-auto">
-        Dynamic login/logout button will be added here using JavaScript
-      </div>
-    </div>
-  </div>
-</nav>
-
-<script>
-  // Assume isLoggedIn is a variable indicating the user's login status
-  const isLoggedIn = false; // Set this to true if the user is logged in
-
-  // Function to update the navbar based on login status
-  function updateNavbar() {
-    const navbarNav = document.querySelector(".navbar-nav.ml-auto");
-
-    // Clear existing content
-    navbarNav.innerHTML = '';
-
-    // Add appropriate button based on login status
-    if (isLoggedIn) {
-      navbarNav.innerHTML += '<a class="nav-link" href="/logout">Logout</a>';
-    } else {
-      navbarNav.innerHTML += '<a class="nav-link" href="/login">Login</a>';
-    }
-  }
-
-  // Initial update when the page loads
-  updateNavbar();
-</script> -->
