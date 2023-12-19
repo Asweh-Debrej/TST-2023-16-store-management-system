@@ -50,7 +50,7 @@
           <form id="saveCartForm" action="<?= url_to('saveCart') ?>" method="post">
             <?= csrf_field() ?>
             <?php foreach ($drink as $d) : ?>
-              <input type="hidden" name="amountsInput[<?= $d['id'] ?>]" id="amountsInput[<?= $d['id'] ?>]" value="1">
+              <input type="hidden" name="amountsInput[<?= $d['id'] ?>]" id="amountsInput[<?= $d['id'] ?>]" value="0">
             <?php endforeach; ?>
             <button class="col-auto btn btn-success float-right mr-4" id="saveBtn" onclick="saveToCart()">Save</button>
           </form>
