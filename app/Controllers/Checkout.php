@@ -217,6 +217,8 @@ class Checkout extends BaseController {
             return redirect()->to('status')->with('successes', $successes);
         } catch (\Exception $e) {
             $errors[] = 'Failed to connect to delivery service. Please try again later.';
+
+            return redirect()->back()->withInput()->with('errors', $errors);
         }
     }
 
