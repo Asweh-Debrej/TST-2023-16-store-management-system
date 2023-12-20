@@ -68,41 +68,6 @@ class Checkout extends BaseController {
         return view('pages/checkout', $data);
     }
 
-    public function initCheckoutSession() {
-        $session = session();
-
-        // Inisialisasi atau reset sesi checkout
-        $session->set('cart', []);
-
-        // Bisa juga tambahkan langkah-langkah inisialisasi lainnya jika diperlukan
-
-        return true; // Untuk memberi tahu bahwa inisialisasi berhasil
-    }
-
-    public function updateQuantity() {
-        $productId = $this->request->getPost('productId');
-        $quantity = $this->request->getPost('quantity');
-
-        // Retrieve the current cart from the session
-        $cart = session()->get('cart');
-
-        // Find the index of the product in the cart
-        $index = array_search($productId, $cart);
-
-        if ($index !== false) {
-            // Update the quantity of the product in the cart
-            // You may want to perform additional validation (e.g., check if the quantity is valid)
-            $cart[$index]['quantity'] = $quantity;
-
-            // Save the updated cart to the session
-            session()->set('cart', $cart);
-
-            return $this->response->setJSON(['status' => 'success', 'message' => 'Quantity updated']);
-        } else {
-            return $this->response->setJSON(['status' => 'error', 'message' => 'Product not found in the cart']);
-        }
-    }
-
     public function placeOrder() {
         if (!auth()->loggedIn()) {
             return redirect()->to('login')->withInput()->with('error', lang('Auth.notLoggedIn'));
@@ -188,71 +153,71 @@ class Checkout extends BaseController {
                     $errors[] = 'Failed to connect to delivery service. Please try again later.';
                 }
             }
+
+            if ($response->getStatusCode() !== 201) {
+                $errors[] = $response->getBody();
+
+                return redirect()->back()->withInput()->with('errors', $errors);
+            }
+
+            $deliveryData = json_decode($response->getBody(), true);
+            $delivery_id = $deliveryData['data']['id'];
+            $delivery_fee = $deliveryData['data']['total_amount'];
+            $subtotal = 0;
+            $productTableData = [];
+            foreach ($amounts as $id => $amount) {
+                if ($amount <= 0) {
+                    continue;
+                }
+
+                if (!$this->drinkModel->find($id)) {
+                    continue;
+                }
+
+                $subtotal += $this->drinkModel->find($id)['harga'] * $amount;
+                array_push($productTableData, [
+                    'product_id' => $id,
+                    'price' => $this->drinkModel->find($id)['harga'],
+                    'quantity' => $amount,
+                ]);
+            }
+
+            if ($subtotal <= 0) {
+                $errors[] = 'Please add some products to your cart first.';
+
+                return redirect()->back()->withInput()->with('errors', $errors);
+            }
+
+            $totalPrice = $subtotal + $delivery_fee;
+
+            // Retrieve data from the form
+            $userId = auth()->id();
+
+            // Save order information
+            $this->orderModel->store([
+                'user_id' => $userId,
+                'name' => $name,
+                'address' => $address,
+                'phone' => $phone,
+                'subtotal' => $subtotal,
+                'shipping_cost' => $delivery_fee,
+                'total_price' => $totalPrice,
+                'delivery_id' => $delivery_id,
+            ]);
+
+            // Save order details
+            $orderId = $this->orderModel->getInsertID();
+            $this->orderItemModel->store($orderId, $productTableData);
+
+            // Clear the cart
+            $this->cartModel->deleteAllCartItems($userId);
+
+            $successes = ['Order placed!'];
+
+            return redirect()->to('status')->with('successes', $successes);
         } catch (\Exception $e) {
             $errors[] = 'Failed to connect to delivery service. Please try again later.';
         }
-
-        if ($response->getStatusCode() !== 201) {
-            $errors[] = $response->getBody();
-
-            return redirect()->back()->withInput()->with('errors', $errors);
-        }
-
-        $deliveryData = json_decode($response->getBody(), true);
-        $delivery_id = $deliveryData['data']['id'];
-        $delivery_fee = $deliveryData['data']['total_amount'];
-        $subtotal = 0;
-        $productTableData = [];
-        foreach ($amounts as $id => $amount) {
-            if ($amount <= 0) {
-                continue;
-            }
-
-            if (!$this->drinkModel->find($id)) {
-                continue;
-            }
-
-            $subtotal += $this->drinkModel->find($id)['harga'] * $amount;
-            array_push($productTableData, [
-                'product_id' => $id,
-                'price' => $this->drinkModel->find($id)['harga'],
-                'quantity' => $amount,
-            ]);
-        }
-
-        if ($subtotal <= 0) {
-            $errors[] = 'Please add some products to your cart first.';
-
-            return redirect()->back()->withInput()->with('errors', $errors);
-        }
-
-        $totalPrice = $subtotal + $delivery_fee;
-
-        // Retrieve data from the form
-        $userId = auth()->id();
-
-        // Save order information
-        $this->orderModel->store([
-            'user_id' => $userId,
-            'name' => $name,
-            'address' => $address,
-            'phone' => $phone,
-            'subtotal' => $subtotal,
-            'shipping_cost' => $delivery_fee,
-            'total_price' => $totalPrice,
-            'delivery_id' => $delivery_id,
-        ]);
-
-        // Save order details
-        $orderId = $this->orderModel->getInsertID();
-        $this->orderItemModel->store($orderId, $productTableData);
-
-        // Clear the cart
-        $this->cartModel->deleteAllCartItems($userId);
-
-        $successes = ['Order placed!'];
-
-        return redirect()->to('status')->with('successes', $successes);
     }
 
     public function storeCart() {

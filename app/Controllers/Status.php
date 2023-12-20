@@ -26,8 +26,8 @@ class Status extends BaseController {
         $user_id = auth()->id();
         $orders = $this->orderModel->where('user_id', $user_id)->findAll();
 
-        foreach ($orders as $key => $o) {
-            try {
+        try {
+            foreach ($orders as $key => $o) {
                 $response = $this->client->get(getenv('api_delivery_baseUrl') .  '/order/' . $o['delivery_id'], [
                     'headers' => [
                         'Content-Type' => 'application/json',
@@ -49,28 +49,28 @@ class Status extends BaseController {
                         return redirect()->back()->with('errors', ["we're having trouble connecting to the delivery service"]);
                     }
                 }
-            } catch (\Exception $e) {
-                return redirect()->back()->with('errors', ["we're having trouble connecting to the delivery service"]);
+
+                if ($response->getStatusCode() === 404 || $response->getStatusCode() === 403) {
+                    continue;
+                } else if ($response->getStatusCode() >= 300) {
+                    return redirect()->back()->with('errors', ["unknown error occured"]);
+                }
+
+                $body = $response->getBody();
+                $responseData = json_decode($body, true);
+
+                $orders[$key]['status'] = $responseData['data']['status'];
+                $orders[$key]['estimated_arrival'] = $responseData['data']['estimated_arrival'];
             }
 
-            if ($response->getStatusCode() === 404 || $response->getStatusCode() === 403) {
-                continue;
-            } else if ($response->getStatusCode() >= 300) {
-                return redirect()->back()->with('errors', ["unknown error occured"]);
-            }
+            $data = [
+                'title' => 'Your Orders',
+                'order' => $orders
+            ];
 
-            $body = $response->getBody();
-            $responseData = json_decode($body, true);
-
-            $orders[$key]['status'] = $responseData['data']['status'];
-            $orders[$key]['estimated_arrival'] = $responseData['data']['estimated_arrival'];
+            return view('pages/status', $data);
+        } catch (\Exception $e) {
+            return redirect()->back()->with('errors', ["we're having trouble connecting to the delivery service"]);
         }
-
-        $data = [
-            'title' => 'Your Orders',
-            'order' => $orders
-        ];
-
-        return view('pages/status', $data);
     }
 }
