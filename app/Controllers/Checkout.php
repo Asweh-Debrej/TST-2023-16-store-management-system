@@ -164,33 +164,35 @@ class Checkout extends BaseController {
         ];
 
         $deliveryUrl = getenv('api_delivery_baseUrl') . '/order';
-        $response = $this->client->post($deliveryUrl, [
-            'headers' => [
-                'Content-Type' => 'application/json',
-                'Accept' => 'application/json',
-                'Authorization' => 'Bearer ' . getenv('api_delivery_token'),
-            ],
-            'json' => $data,
-        ]);
+        try {
+            $response = $this->client->post($deliveryUrl, [
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                    'Accept' => 'application/json',
+                    'Authorization' => 'Bearer ' . getenv('api_delivery_token'),
+                ],
+                'json' => $data,
+            ]);
 
-        if ($response->getStatusCode() === 401 || $response->getStatusCode() === 302) {
-            if (delivery_login()) {
-                $response = $this->client->post($deliveryUrl, [
-                    'headers' => [
-                        'Content-Type' => 'application/json',
-                        'Accept' => 'application/json',
-                        'Authorization' => 'Bearer ' . getenv('api_delivery_token'),
-                    ],
-                    'json' => $data,
-                ]);
-            } else {
-                $errors[] = 'Failed to login to delivery service. Please try again later.';
+            if ($response->getStatusCode() === 401 || $response->getStatusCode() === 302) {
+                if (delivery_login()) {
+                    $response = $this->client->post($deliveryUrl, [
+                        'headers' => [
+                            'Content-Type' => 'application/json',
+                            'Accept' => 'application/json',
+                            'Authorization' => 'Bearer ' . getenv('api_delivery_token'),
+                        ],
+                        'json' => $data,
+                    ]);
+                } else {
+                    $errors[] = 'Failed to connect to delivery service. Please try again later.';
+                }
             }
+        } catch (\Exception $e) {
+            $errors[] = 'Failed to connect to delivery service. Please try again later.';
         }
 
         if ($response->getStatusCode() !== 201) {
-            $errors[] = 'Failed to place order. Please try again later.';
-            $errors[] = $response->getStatusCode() . ' ' . $response->getReasonPhrase();
             $errors[] = $response->getBody();
 
             return redirect()->back()->withInput()->with('errors', $errors);
