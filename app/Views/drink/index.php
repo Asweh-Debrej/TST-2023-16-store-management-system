@@ -85,7 +85,7 @@
                   <div class="input-group-prepend">
                     <button class="btn btn-outline-secondary" type="button" id="minus<?= $d['id'] ?>Btn" onclick="minusItem(<?= $d['id'] ?>)">-</button>
                   </div>
-                  <input type="text" class="form-control" value="1" id="amount<?= $d['id'] ?>Input" style="min-width: 54px; max-width: 60px;" onblur="onBlurHandler('amount<?= $d['id'] ?>Input')" onchange="onInputHandler(<?= $d['id'] ?>)">
+                  <input type="text" class="form-control" value="0" id="amount<?= $d['id'] ?>Input" style="min-width: 54px; max-width: 60px;" onblur="onBlurHandler('amount<?= $d['id'] ?>Input')" onchange="onInputHandler(<?= $d['id'] ?>)">
                   <div class="input-group-append">
                     <button class="btn btn-outline-secondary" type="button" id="plus<?= $d['id'] ?>Btn" onclick="plusItem(<?= $d['id'] ?>)">+</button>
                   </div>
