@@ -24,8 +24,16 @@ class Checkout extends BaseController {
         $this->orderItemModel = new OrderItemModel();
 
         $options = [
-            'http_errors' => false,
+            // 'baseURI' => 'https://tst-tubes-16-delivery.azurewebsites.net',
+            'baseURI' => 'http://localhost:8081',
             'timeout' => 5,
+            'http_errors' => false, // Biar klo error tetep bisa dibaca
+            'headers' => [
+                'Authorization' => 'Bearer ' . getenv('api.key'), // Hrs pake API key
+                'Accept'     => 'application/json',
+                'Content-Type' => 'application/json',
+            ],
+            'debug' => true,
         ];
         $this->client = \Config\Services::curlrequest($options);
     }
@@ -99,6 +107,7 @@ class Checkout extends BaseController {
         ];
 
         $errors = [];
+        $successes = [];
 
         // Run validation with custom error messages
         if (!$this->validate($validationRules, $validationMessages)) {
@@ -128,36 +137,37 @@ class Checkout extends BaseController {
             'phone_number' => $phone,
         ];
 
-        $deliveryUrl = getenv('api_delivery_baseUrl') . '/order';
-        try {
-            $response = $this->client->post($deliveryUrl, [
-                'headers' => [
-                    'Content-Type' => 'application/json',
-                    'Accept' => 'application/json',
-                    'Authorization' => 'Bearer ' . getenv('api_delivery_token'),
-                ],
-                'json' => $data,
-            ]);
+        // $deliveryUrl = getenv('api_delivery_baseUrl') . '/order';
+        $successes[] = 'shibal';
+        // try {
+            // $response = $this->client->request('POST', '/api/order', [
+            //     'json' => $data,
+            // ]);
+            // $successes[] = 'saekkiya';
 
-            if ($response->getStatusCode() === 401 || $response->getStatusCode() === 302) {
+            // if ($response->getStatusCode() === 404 || $response->getStatusCode() === 302) {
+                $successes[] = 'trying login';
                 if (delivery_login()) {
-                    $response = $this->client->post($deliveryUrl, [
-                        'headers' => [
-                            'Content-Type' => 'application/json',
-                            'Accept' => 'application/json',
-                            'Authorization' => 'Bearer ' . getenv('api_delivery_token'),
-                        ],
+                    $response = $this->client->post('/api/order', [
                         'json' => $data,
+                        'Authorization' => 'Bearer 940c806fc5444c1647bf8305aec7d5ac341fe184e2c24a26130a0b3c519150dc',
+                        'verify' => false,
                     ]);
                 } else {
                     $errors[] = 'Failed to connect to delivery service. Please try again later.';
                 }
-            }
+            // }
 
             if ($response->getStatusCode() !== 201) {
                 $errors[] = $response->getBody();
+                $errors[] = 'Failed to connect to delivery service. Please try again later.';
+                $errors[] = 'status code: ' . $response->getStatusCode();
+                $errors[] = 'reason: ' . $response->getReasonPhrase();
+                // $successes[] = '$deliveryUrl: ' . $deliveryUrl;
+                $successes[] = 'login status: ' . getenv('aan_shibal');
+                $successes[] = 'token: ' . getenv('api_delivery_token');
 
-                return redirect()->back()->withInput()->with('errors', $errors);
+                return redirect()->back()->withInput()->with('errors', $errors)->with('successes', $successes);
             }
 
             $deliveryData = json_decode($response->getBody(), true);
@@ -212,14 +222,17 @@ class Checkout extends BaseController {
             // Clear the cart
             $this->cartModel->deleteAllCartItems($userId);
 
-            $successes = ['Order placed!'];
+            $successes[] = 'Order placed!';
+            $successes[] = 'delivery base url: ' . getenv('api_delivery_baseUrl');
+            $successes[] = 'response: ' . $response;
 
             return redirect()->to('status')->with('successes', $successes);
-        } catch (\Exception $e) {
-            $errors[] = 'Failed to connect to delivery service. Please try again later.';
+        // } catch (\Exception $e) {
+        //     $errors[] = 'Failed to connect to delivery service. Please try again later.';
+        //     $successes[] = 'delivery base url: ' . getenv('api_delivery_baseUrl');
 
-            return redirect()->back()->withInput()->with('errors', $errors);
-        }
+        //     return redirect()->back()->withInput()->with('errors', $errors)->with('successes', $successes);
+        // }
     }
 
     public function storeCart() {
