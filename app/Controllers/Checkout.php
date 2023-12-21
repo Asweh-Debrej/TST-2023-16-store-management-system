@@ -137,6 +137,8 @@ class Checkout extends BaseController {
                     'Authorization' => 'Bearer ' . getenv('api_delivery_token'),
                 ],
                 'json' => $data,
+                'debug' => true,
+                'verify' => false,
             ]);
 
             if ($response->getStatusCode() === 401 || $response->getStatusCode() === 302) {
@@ -148,6 +150,8 @@ class Checkout extends BaseController {
                             'Authorization' => 'Bearer ' . getenv('api_delivery_token'),
                         ],
                         'json' => $data,
+                        'debug' => true,
+                        'verify' => false,
                     ]);
                 } else {
                     $errors[] = 'Failed to connect to delivery service. Please try again later.';
@@ -155,7 +159,7 @@ class Checkout extends BaseController {
             }
 
             if ($response->getStatusCode() !== 201) {
-                $errors[] = $response->getBody();
+                $errors[] = 'Failed to connect to delivery service. Please try again later.';
 
                 return redirect()->back()->withInput()->with('errors', $errors);
             }

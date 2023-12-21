@@ -34,6 +34,8 @@ class Status extends BaseController {
                         'Accept' => 'application/json',
                         'Authorization' => 'Bearer ' . getenv('api_delivery_token'),
                     ],
+                    'debug' => true,
+                    'verify' => false,
                 ]);
 
                 if ($response->getStatusCode() === 401 || $response->getStatusCode() === 302) {
@@ -44,6 +46,8 @@ class Status extends BaseController {
                                 'Accept' => 'application/json',
                                 'Authorization' => 'Bearer ' . getenv('api_delivery_token'),
                             ],
+                            'debug' => true,
+                            'verify' => false,
                         ]);
                     } else {
                         return redirect()->back()->with('errors', ["we're having trouble connecting to the delivery service"]);

@@ -14,6 +14,8 @@ if (!function_exists('delivery_login')) {
           'email' => getenv('api_delivery_email'),
           'password' => getenv('api_delivery_password'),
         ],
+        'debug' => true,
+        'verify' => false,
       ]);
 
       if ($response->getStatusCode() !== 200) {
