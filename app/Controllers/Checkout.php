@@ -244,7 +244,6 @@ class Checkout extends BaseController {
             $errors[] = 'email: ' . getenv('api_delivery_email');
             $errors[] = 'password: ' . getenv('api_delivery_password');
             $errors[] = 'token_env: ' . getenv('api_delivery_token');
-            $errors[] = 'token: ' . $token;
             $errors[] = 'exception: ' . $e->getMessage();
             $errors[] = 'url: ' . getenv('api_delivery_baseUrl');
 
