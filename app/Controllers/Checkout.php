@@ -143,7 +143,8 @@ class Checkout extends BaseController {
             ]);
 
             if ($response->getStatusCode() === 401 || $response->getStatusCode() === 302) {
-                if (delivery_login()) {
+                $token = delivery_login();
+                if ($token) {
                     $response = $this->client->post($deliveryUrl, [
                         'headers' => [
                             'Content-Type' => 'application/json',
@@ -160,7 +161,8 @@ class Checkout extends BaseController {
                     $errors[] = 'Failed to connect to delivery service. Please try again later.';
                     $errors[] = 'email: ' . getenv('api_delivery_email');
                     $errors[] = 'password: ' . getenv('api_delivery_password');
-                    $errors[] = 'token: ' . getenv('api_delivery_token');
+                    $errors[] = 'token_env: ' . getenv('api_delivery_token');
+                    $errors[] = 'token: ' . $token;
                     $errors[] = 'url: ' . getenv('api_delivery_baseUrl');
                     $errors[] = 'status: ' . $response->getStatusCode();
                     $errors[] = 'reason: ' . $response->getReason();
@@ -172,7 +174,8 @@ class Checkout extends BaseController {
                 $errors[] = 'Failed to connect to delivery service. Please try again later.';
                 $errors[] = 'email: ' . getenv('api_delivery_email');
                 $errors[] = 'password: ' . getenv('api_delivery_password');
-                $errors[] = 'token: ' . getenv('api_delivery_token');
+                $errors[] = 'token_env: ' . getenv('api_delivery_token');
+                $errors[] = 'token: ' . $token;
                 $errors[] = 'url: ' . getenv('api_delivery_baseUrl');
                 $errors[] = 'status: ' . $response->getStatusCode();
                 $errors[] = 'reason: ' . $response->getReason();
@@ -240,7 +243,9 @@ class Checkout extends BaseController {
             $errors[] = 'Failed to connect to delivery service. Please try again later.';
             $errors[] = 'email: ' . getenv('api_delivery_email');
             $errors[] = 'password: ' . getenv('api_delivery_password');
-            $errors[] = 'token: ' . getenv('api_delivery_token');
+            $errors[] = 'token_env: ' . getenv('api_delivery_token');
+            $errors[] = 'token: ' . $token;
+            $errors[] = 'exception: ' . $e->getMessage();
             $errors[] = 'url: ' . getenv('api_delivery_baseUrl');
 
             return redirect()->back()->withInput()->with('errors', $errors);
