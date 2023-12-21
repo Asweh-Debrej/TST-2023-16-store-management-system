@@ -14,3 +14,5 @@ $routes->post('/drink/addToCheckout', 'Drink::addToCheckout', ['as' => 'addToChe
 $routes->post('/checkout/save', 'Checkout::storeCart', ['as' => 'saveCart']);
 
 service('auth')->routes($routes);
+
+$routes->get('/health', 'Health::index', ['as' => 'health']);
