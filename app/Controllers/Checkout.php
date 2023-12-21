@@ -129,7 +129,7 @@ class Checkout extends BaseController {
         ];
 
         $deliveryUrl = getenv('api_delivery_baseUrl') . '/order';
-        try {
+        // try {
             $response = $this->client->post($deliveryUrl, [
                 'headers' => [
                     'Content-Type' => 'application/json',
@@ -238,17 +238,17 @@ class Checkout extends BaseController {
             $successes = ['Order placed!'];
 
             return redirect()->to('status')->with('successes', $successes);
-        } catch (\Exception $e) {
-            $errors[] = 'shibal 3';
-            $errors[] = 'Failed to connect to delivery service. Please try again later.';
-            $errors[] = 'email: ' . getenv('api_delivery_email');
-            $errors[] = 'password: ' . getenv('api_delivery_password');
-            $errors[] = 'token_env: ' . getenv('api_delivery_token');
-            $errors[] = 'exception: ' . $e->getMessage();
-            $errors[] = 'url: ' . getenv('api_delivery_baseUrl');
+        // } catch (\Exception $e) {
+        //     $errors[] = 'shibal 3';
+        //     $errors[] = 'Failed to connect to delivery service. Please try again later.';
+        //     $errors[] = 'email: ' . getenv('api_delivery_email');
+        //     $errors[] = 'password: ' . getenv('api_delivery_password');
+        //     $errors[] = 'token_env: ' . getenv('api_delivery_token');
+        //     $errors[] = 'exception: ' . $e->getMessage();
+        //     $errors[] = 'url: ' . getenv('api_delivery_baseUrl');
 
-            return redirect()->back()->withInput()->with('errors', $errors);
-        }
+        //     return redirect()->back()->withInput()->with('errors', $errors);
+        // }
     }
 
     public function storeCart() {
