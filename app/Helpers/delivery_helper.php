@@ -16,6 +16,7 @@ if (!function_exists('delivery_login')) {
         ],
         'debug' => true,
         'verify' => false,
+        'http_errors' => false,
       ]);
 
       if ($response->getStatusCode() !== 200) {
