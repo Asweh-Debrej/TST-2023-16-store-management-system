@@ -36,7 +36,6 @@ class Status extends BaseController {
                     ],
                     'debug' => true,
                     'verify' => false,
-                    'http_errors' => false,
                 ]);
 
                 if ($response->getStatusCode() === 401 || $response->getStatusCode() === 302) {
@@ -49,7 +48,6 @@ class Status extends BaseController {
                             ],
                             'debug' => true,
                             'verify' => false,
-                            'http_errors' => false,
                         ]);
                     } else {
                         return redirect()->back()->with('errors', ["we're having trouble connecting to the delivery service"]);

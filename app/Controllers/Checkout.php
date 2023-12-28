@@ -139,7 +139,6 @@ class Checkout extends BaseController {
                 'json' => $data,
                 'debug' => true,
                 'verify' => false,
-                'http_errors' => false,
             ]);
 
             if ($response->getStatusCode() === 401 || $response->getStatusCode() === 302) {
@@ -153,29 +152,14 @@ class Checkout extends BaseController {
                         'json' => $data,
                         'debug' => true,
                         'verify' => false,
-                        'http_errors' => false,
                     ]);
                 } else {
-                    $errors[] = 'shibal 1';
                     $errors[] = 'Failed to connect to delivery service. Please try again later.';
-                    $errors[] = 'email: ' . getenv('api_delivery_email');
-                    $errors[] = 'password: ' . getenv('api_delivery_password');
-                    $errors[] = 'token: ' . getenv('api_delivery_token');
-                    $errors[] = 'url: ' . getenv('api_delivery_baseUrl');
-                    $errors[] = 'status: ' . $response->getStatusCode();
-                    $errors[] = 'reason: ' . $response->getReason();
                 }
             }
 
             if ($response->getStatusCode() !== 201) {
-                $errors[] = 'shibal 2';
                 $errors[] = 'Failed to connect to delivery service. Please try again later.';
-                $errors[] = 'email: ' . getenv('api_delivery_email');
-                $errors[] = 'password: ' . getenv('api_delivery_password');
-                $errors[] = 'token: ' . getenv('api_delivery_token');
-                $errors[] = 'url: ' . getenv('api_delivery_baseUrl');
-                $errors[] = 'status: ' . $response->getStatusCode();
-                $errors[] = 'reason: ' . $response->getReason();
 
                 return redirect()->back()->withInput()->with('errors', $errors);
             }
@@ -236,12 +220,7 @@ class Checkout extends BaseController {
 
             return redirect()->to('status')->with('successes', $successes);
         } catch (\Exception $e) {
-            $errors[] = 'shibal 3';
             $errors[] = 'Failed to connect to delivery service. Please try again later.';
-            $errors[] = 'email: ' . getenv('api_delivery_email');
-            $errors[] = 'password: ' . getenv('api_delivery_password');
-            $errors[] = 'token: ' . getenv('api_delivery_token');
-            $errors[] = 'url: ' . getenv('api_delivery_baseUrl');
 
             return redirect()->back()->withInput()->with('errors', $errors);
         }
