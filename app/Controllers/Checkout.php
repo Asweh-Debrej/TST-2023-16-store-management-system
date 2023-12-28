@@ -137,8 +137,8 @@ class Checkout extends BaseController {
                     'Authorization' => 'Bearer ' . getenv('api_delivery_token'),
                 ],
                 'json' => $data,
-                // 'debug' => true,
-                // 'verify' => false,
+                'debug' => true,
+                'verify' => false,
                 'http_errors' => false,
             ]);
 
@@ -152,8 +152,8 @@ class Checkout extends BaseController {
                             'Authorization' => 'Bearer ' . getenv('api_delivery_token'),
                         ],
                         'json' => $data,
-                        // 'debug' => true,
-                        // 'verify' => false,
+                        'debug' => true,
+                        'verify' => false,
                         'http_errors' => false,
                     ]);
                 } else {

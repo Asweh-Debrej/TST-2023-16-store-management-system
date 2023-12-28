@@ -34,8 +34,8 @@ class Status extends BaseController {
                         'Accept' => 'application/json',
                         'Authorization' => 'Bearer ' . getenv('api_delivery_token'),
                     ],
-                    // 'debug' => true,
-                    // 'verify' => false,
+                    'debug' => true,
+                    'verify' => false,
                     'http_errors' => false,
                 ]);
 
@@ -47,8 +47,8 @@ class Status extends BaseController {
                                 'Accept' => 'application/json',
                                 'Authorization' => 'Bearer ' . getenv('api_delivery_token'),
                             ],
-                            // 'debug' => true,
-                            // 'verify' => false,
+                            'debug' => true,
+                            'verify' => false,
                             'http_errors' => false,
                         ]);
                     } else {
